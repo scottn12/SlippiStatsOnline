@@ -1,0 +1,5 @@
+{
+    "dependencies": {
+        "slp-parser-js": "^4.1.0"
+    }
+}
