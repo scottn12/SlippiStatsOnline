@@ -8,15 +8,9 @@ const stages = {2: 'Fountain of Dreams', 3: 'Pokemon Stadium', 8: "Yoshi's Story
 // Config
 const dataDirectory = config.dataDirectory;
 const player1 = config.player1;
-const player1Char = config.player1Char;
+const player1Chars = config.player1Characters;
 const player2 = config.player2;
-const player2Char = config.player2Char;
-
-// Get files
-files = [];
-fs.readdirSync(dataDirectory).forEach(file => {
-    files.push(file);
-});
+const player2Chars = config.player2Characters;
 
 // Stats (Index 0 : Player 1, Index 2 : Player 1)
 let stats = {
@@ -33,14 +27,18 @@ let stats = {
     apm : [0, 0],  // Actions per minute
     openingsPerKill : [0, 0],
     damagePerOpening : [0, 0],
-    neutralWinRatio : [0, 0],
+    neutralWins : [0, 0],
     conversionRatio: [0, 0],
     totalKills: [0, 0],
     sd: [0, 0]
 }
 
-files.forEach((file, index, array) => {
+fs.readdirSync(dataDirectory).forEach((file, index, array) => {
     
+    if (file === '.gitkeep') {
+        return;
+    }
+
     if (index === 50 || index % 100 === 0 && index > 0) {
         console.log(`${index}/${array.length} files processed (${Math.round(index/array.length*100)}%)`);
     }
@@ -67,14 +65,14 @@ files.forEach((file, index, array) => {
     if (!metadata.players['0'] || !metadata.players['1']) {
         return;
     }
-    if (metadata.players['0'].names.netplay === player1 && metadata.players['1'].names.netplay === player2) {
-        if (characters[settings.players[0].characterId] !== player1Char || characters[settings.players[1].characterId] !== player2Char) {
+    if (player1.includes(metadata.players['0'].names.netplay) && player2.includes(metadata.players['1'].names.netplay)) {
+        if (!player1Chars.includes(characters[settings.players[0].characterId]) || !player2Chars.includes(characters[settings.players[1].characterId])) {
             return;  // Invalid characters
         }
     }
-    else if (metadata.players['0'].names.netplay === player2 && metadata.players['1'].names.netplay === player1) {
+    else if (player2.includes(metadata.players['0'].names.netplay) && player1.includes(metadata.players['1'].names.netplay)) {
         reverse = true;
-        if (characters[settings.players[1].characterId] !== player1Char || characters[settings.players[0].characterId] !== player2Char) {
+        if (!player1Chars.includes(characters[settings.players[1].characterId]) || !player2Chars.includes(characters[settings.players[0].characterId])) {
             return;  // Invalid characters
         }
     }
@@ -146,7 +144,7 @@ files.forEach((file, index, array) => {
     stats.apm[0] += gameStats.overall[p1Index].inputsPerMinute.ratio;
     stats.openingsPerKill[0] += gameStats.overall[p1Index].openingsPerKill.ratio;
     stats.damagePerOpening[0] += gameStats.overall[p1Index].damagePerOpening.ratio;
-    stats.neutralWinRatio[0] += gameStats.overall[p1Index].neutralWinRatio.ratio;
+    stats.neutralWins[0] += gameStats.overall[p1Index].neutralWinRatio.count;
     stats.totalKills[0] += gameStats.overall[p1Index].killCount;
 
     // Player 2
@@ -155,7 +153,7 @@ files.forEach((file, index, array) => {
     stats.apm[1] += gameStats.overall[p2Index].inputsPerMinute.ratio;
     stats.openingsPerKill[1] += gameStats.overall[p2Index].openingsPerKill.ratio;
     stats.damagePerOpening[1] += gameStats.overall[p2Index].damagePerOpening.ratio;
-    stats.neutralWinRatio[1] += gameStats.overall[p2Index].neutralWinRatio.ratio;
+    stats.neutralWins[1] += gameStats.overall[p2Index].neutralWinRatio.count;
     stats.totalKills[1] += gameStats.overall[p2Index].killCount;
 
 });
@@ -164,7 +162,7 @@ files.forEach((file, index, array) => {
 
 // Display
 console.log(`Skaht's Stats: (${stats.numGames} total games)`)
-console.log(`Players:\t\t${player1} (${player1Char})\t${player2} (${player2Char})`);
+console.log(`Players:\t\t${player1} (${player1Chars})\t${player2} (${player2Chars})`);
 
 // Wins
 console.log(`Total Wins:\t\t${stats.wins[0]} (${Math.round(stats.wins[0]/stats.numGames*100)}%)\t${stats.wins[1]} (${Math.round(stats.wins[1]/stats.numGames*100)}%)`);
@@ -186,6 +184,7 @@ console.log(`Damage Dealt:\t\t${(stats.totalDamage[0]/stats.numGames).toFixed(2)
 console.log(`Damage per Opening:\t${(stats.damagePerOpening[0]/stats.numGames).toFixed(2)}\t\t${(stats.damagePerOpening[1]/stats.numGames).toFixed(2)}`);
 console.log(`Average Kill Percent:\t${Math.round(stats.totalDamage[0]/stats.totalKills[0])}%\t\t${Math.round(stats.totalDamage[1]/stats.totalKills[1])}%`);
 console.log(`Conversion Ratio:\t${Math.round(stats.conversionRatio[0]/stats.numGames*100)}%\t\t${Math.round(stats.conversionRatio[1]/stats.numGames*100)}%`);
-console.log(`Neutral Wins:\t\t${Math.round(stats.neutralWinRatio[0]/stats.numGames*100)}%\t\t${Math.round(stats.neutralWinRatio[1]/stats.numGames*100)}%`);
+let totalNeutral = stats.neutralWins[0] + stats.neutralWins[1];
+console.log(`Neutral Wins:\t\t${Math.round(stats.neutralWins[0]/totalNeutral*100)}%\t\t${Math.round(stats.neutralWins[1]/totalNeutral*100)}%`);
 console.log(`APM:\t\t\t${(stats.apm[0]/stats.numGames).toFixed(2)}\t\t${(stats.apm[1]/stats.numGames).toFixed(2)}`);
 console.log(`Margin of Victory:\t${(stats.stockDiff[0]/stats.wins[0]).toFixed(2)}\t\t${(stats.stockDiff[1]/stats.wins[1]).toFixed(2)}`);
