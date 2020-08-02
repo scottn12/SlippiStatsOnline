@@ -13,11 +13,3 @@ var server = app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`)
 });
 server.timeout = 1000 * 60 * 30;
-
-
-/**
- * TODO
- * deal with sheik/zelda?
- * allow querying for multiple characters/stages
- * add tooltips
- */

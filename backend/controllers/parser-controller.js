@@ -154,7 +154,7 @@ const parserController = (db) => {
                     gameData.stocksTaken = overall.killCount;
                     gameData.totalDamage = overall.totalDamage;
                     gameData.apm = overall.inputsPerMinute.ratio;
-                    gameData.openings = overall.openingsPerKill.total;
+                    gameData.openings = overall.openingsPerKill.count;
                     gameData.neutralWins = overall.neutralWinRatio.count;
                     gameData.neutralLosses = overall.neutralWinRatio.total - overall.neutralWinRatio.count;
                     gameData.conversions = overall.successfulConversions.count;
@@ -168,7 +168,7 @@ const parserController = (db) => {
                     gameData.opponentStocksTaken = opponentOverall.killCount;
                     gameData.opponentTotalDamage = opponentOverall.totalDamage;
                     gameData.opponentApm = opponentOverall.inputsPerMinute.ratio;
-                    gameData.opponentOpenings = opponentOverall.openingsPerKill.total;
+                    gameData.opponentOpenings = opponentOverall.openingsPerKill.count;
                     gameData.opponentNeutralWins = opponentOverall.neutralWinRatio.count;
                     gameData.opponentNeutralLosses = opponentOverall.neutralWinRatio.total - opponentOverall.neutralWinRatio.count;
                     gameData.opponentConversions = opponentOverall.successfulConversions.count;
@@ -197,7 +197,6 @@ const parserController = (db) => {
                 }
 
                 await entry.autodrain();
-                console.log(success + badFiles.length);
             })
             .promise();
 

@@ -15,35 +15,29 @@
 </template>
 
 <script>
+
+import API from '../api';
+
 export default {
-  name: "HelloWorld",
+  name: "Upload",
   props: {
     source: String,
   },
   data: () => ({
-    player: 'SCOT#864',
+    player: '',
     files: [],
   }),
   methods: {
     send() {
       var data = new FormData();
       data.append('file', this.files[0]);
-      // use api file later
-      fetch('http://localhost:3000/slippi/save', {
-        method: 'POST',
-        headers: {
-          'Player': this.player, 
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: data
+      API.save(data, this.player)
+      .then((response) => {
+        console.log(response.data);
       })
-        .then((response) => response.json())
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      .catch((err) => {
+        console.log(err);
+      });
     },
   },
 };

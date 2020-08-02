@@ -1,27 +1,27 @@
-const readController = (db) => {
+const statsController = (db) => {
 
-    const characters = ['captianfalcon', 'donkeykong', 'fox', 'mrgameandwatch', 'kirby', 'bowser', 'link', 'luigi', 'mario', 'marth', 'mewtwo', 'ness', 'peach', 'pikachu', 'iceclimbers', 'jigglypuff', 'samus', 'yoshi', 'zelda', 'sheik', 'falco', 'younglink', 'drmario', 'roy', 'pichu', 'ganondorf'];
-    const stages = { 'fountainofdreams': 2, 'pokemonstadium': 3, "yoshisstory": 8, 'dreamland': 28, 'battlefield': 31, 'finaldestination': 32 };
-    const cleanCharacters = ['Captian Falcon', 'Donkey Kong', 'Fox', 'Mr. Game & Watch', 'Kirby', 'Bowser', 'Link', 'Luigi', 'Mario', 'Marth', 'Mewtwo', 'Ness', 'Peach', 'Pikachu', 'Ice Climbers', 'Jigglypuff', 'Samus', 'Yoshi', 'Zelda', 'Sheik', 'Falco', 'Young Link', 'Dr. Mario', 'Roy', 'Pichu', 'Ganondorf']
+    const characterList = ['captainfalcon', 'donkeykong', 'fox', 'mr.game&watch', 'kirby', 'bowser', 'link', 'luigi', 'mario', 'marth', 'mewtwo', 'ness', 'peach', 'pikachu', 'iceclimbers', 'jigglypuff', 'samus', 'yoshi', 'zelda', 'sheik', 'falco', 'younglink', 'dr.mario', 'roy', 'pichu', 'ganondorf'];
+    const stageList = { 'fountainofdreams': 2, 'pokemonstadium': 3, "yoshisstory": 8, 'dreamland': 28, 'battlefield': 31, 'finaldestination': 32 };
+    const cleanCharacters = ['Captain Falcon', 'Donkey Kong', 'Fox', 'Mr. Game & Watch', 'Kirby', 'Bowser', 'Link', 'Luigi', 'Mario', 'Marth', 'Mewtwo', 'Ness', 'Peach', 'Pikachu', 'Ice Climbers', 'Jigglypuff', 'Samus', 'Yoshi', 'Zelda', 'Sheik', 'Falco', 'Young Link', 'Dr. Mario', 'Roy', 'Pichu', 'Ganondorf']
     const cleanStages = { 2: 'Fountain of Dreams', 3: 'Pokemon Stadium', 8: "Yoshi's Story", 28: 'Dreamland', 31: 'Battlefield', 32: 'Final Destination' };
 
 
-    const read = async (req, res) => {
+    const getStats = async (req, res) => {
 
-        /**
-         * Check for valid input and find matching games
-         */
-
+        // Setup query object
         var data = {};
 
+        /**
+         * Check for valid input and find matching games, get player codes
+         */
         // Get player codes
-        if (req.query.code) {
+        if (req.params.code) {
             var code;
-            let codeFirstDigit = req.query.code.indexOf(req.query.code.match(/\d/));
+            let codeFirstDigit = req.params.code.indexOf(req.params.code.match(/\d/));
             if (codeFirstDigit == -1) {
                 return res.status(400).send({ message: 'Invalid player code provided.' });
             }
-            code = req.query.code.substring(0, codeFirstDigit).toLocaleUpperCase() + '#' + req.query.code.substring(codeFirstDigit);
+            code = req.params.code.substring(0, codeFirstDigit).toLocaleUpperCase() + '#' + req.params.code.substring(codeFirstDigit);
             data.code = code;
         }
         else {
@@ -30,7 +30,7 @@ const readController = (db) => {
 
         if (req.query.opponentCode) {
             var opponentCode;
-            let opponentCodeFirstDigit = req.query.code.indexOf(req.query.code.match(/\d/));
+            let opponentCodeFirstDigit = req.query.opponentCode.indexOf(req.query.opponentCode.match(/\d/));
             if (opponentCodeFirstDigit == -1) {
                 return res.status(400).send({ message: 'Invalid opponent player code provided.' });
             }
@@ -39,30 +39,49 @@ const readController = (db) => {
         }
 
         // Get characters
-        if (req.query.character) {
-            var character;
-            character = characters.indexOf(req.query.character.toLocaleLowerCase());
-            if (character == -1) {
+        if (req.query.characters) {
+            data.character = { $in: [] };
+            let err = false;
+            req.query.characters.forEach((character) => {
+                let charIndex = characterList.indexOf(character.toLocaleLowerCase());
+                if (charIndex == -1) {
+                    err = true;
+                }
+                data.character.$in.push(charIndex);
+            });
+            if (err) {
                 return res.status(400).send({ message: 'Invalid character.' });
             }
-            data.character = character;
         }
 
-        if (req.query.opponentCharacter) {
-            var opponentCharacter;
-            opponentCharacter = characters.indexOf(req.query.opponentCharacter.toLocaleLowerCase());
-            if (opponentCharacter == -1) {
+        if (req.query.opponentCharacters) {
+            data.opponentCharacter = { $in: [] };
+            let err = false
+            req.query.opponentCharacters.forEach((character) => {
+                let charIndex = characterList.indexOf(character.toLocaleLowerCase());
+                if (charIndex == -1) {
+                    err = true;
+                }
+                data.opponentCharacter.$in.push(charIndex);
+            });
+            if (err) {
                 return res.status(400).send({ message: 'Invalid opponent character.' });
             }
-            data.opponentCharacter = opponentCharacter;
         }
 
         // Get stage
-        if (req.query.stage) {
-            if (!(req.query.stage.toLocaleLowerCase() in stages)) {
+        if (req.query.stages) {
+            data.stage = { $in: [] };
+            let err;
+            req.query.stages.forEach((stage) => {
+                if (!(stage.toLocaleLowerCase() in stageList)) {
+                    err = true;
+                }
+                data.stage.$in.push(stageList[stage.toLocaleLowerCase()]);
+            });
+            if (err) {
                 return res.status(400).send({ message: 'Invalid stage.' });
             }
-            data.stage = stages[req.query.stage.toLocaleLowerCase()];
         }
 
         // Check if LRAStart should be excluded
@@ -150,19 +169,19 @@ const readController = (db) => {
         games.forEach(game => {
             // Skip filtered games
             if (data.opponentCode && data.opponentCode != game.opponentCode) return;
-            if (data.character && data.character != game.character) return;
-            if (data.opponentCharacter && data.opponentCharacter != game.opponentCharacter) return;
-            if (data.stage && data.stage != game.stage) return;
+            if (data.character && data.character.$in.indexOf(game.character) == -1) return;
+            if (data.opponentCharacter && data.opponentCharacter.$in.indexOf(game.opponentCharacter) == -1) return;
+            if (data.stage && data.stage.$in.indexOf(game.stage) == -1) return;
 
             // Get player data
             if (game.tag && game.tag != '') {
                 stats.player.playerData.tag = game.tag;
             }
             if (!(game.opponentCode in stats.opponent.playerData)) {
-                stats.opponent.playerData.opponentCode = game.tag;
+                stats.opponent.playerData[game.opponentCode] = game.tag;
             }
-            else if (game.opponentCode in stats.opponent.playerData && game.tag && game.tag != '') {
-                stats.opponent.playerData.opponentCode = game.tag;
+            else if (game.opponentCode in stats.opponent.playerData && game.opponentTag && game.opponentTag != '') {
+                stats.opponent.playerData[game.opponentCode] = game.opponentTag;
             }
 
             // Accumulate overall stats
@@ -196,7 +215,7 @@ const readController = (db) => {
             playerOverall.negativeCounterHits += game.negativeCounterHits;
             playerOverall.beneficialTrades += game.beneficialTrades;
             playerOverall.negativeTrades += game.negativeTrades;
-            
+
             opponentOverall.stocksTaken += game.opponentStocksTaken;
             opponentOverall.stockDifferential += game.opponentStockDifferential;
             opponentOverall.totalDamage += game.opponentTotalDamage;
@@ -227,7 +246,7 @@ const readController = (db) => {
         playerAverage.openingsPerKill = (playerOverall.openings / playerOverall.stocksTaken).toFixed(2);
         playerAverage.neutralWinRatio = (playerOverall.neutralWins / (playerOverall.neutralWins + playerOverall.neutralLosses)).toFixed(2);
         playerAverage.conversionRatio = (playerOverall.conversions / (playerOverall.conversions + playerOverall.missedConversions)).toFixed(2);
-        playerAverage.beneficialCounterHitRatio = (playerOverall.beneficialTrades / (playerOverall.beneficialTrades + playerOverall.negativeTrades)).toFixed(2);
+        playerAverage.beneficialCounterHitRatio = (playerOverall.counterHits / (playerOverall.counterHits + playerOverall.negativeCounterHits)).toFixed(2);
         playerAverage.beneficialTradeRatio = (playerOverall.beneficialTrades / (playerOverall.beneficialTrades + playerOverall.negativeTrades)).toFixed(2);
 
         opponentAverage.stocksTaken = (opponentOverall.stocksTaken / stats.numGames).toFixed(2);
@@ -237,17 +256,18 @@ const readController = (db) => {
         opponentAverage.openingsPerKill = (opponentOverall.openings / opponentOverall.stocksTaken).toFixed(2);
         opponentAverage.neutralWinRatio = (opponentOverall.neutralWins / (opponentOverall.neutralWins + opponentOverall.neutralLosses)).toFixed(2);
         opponentAverage.conversionRatio = (opponentOverall.conversions / (opponentOverall.conversions + opponentOverall.missedConversions)).toFixed(2);
-        opponentAverage.beneficialCounterHitRatio = (opponentOverall.beneficialTrades / (opponentOverall.beneficialTrades + opponentOverall.negativeTrades)).toFixed(2);
+        opponentAverage.beneficialCounterHitRatio = (opponentOverall.counterHits / (opponentOverall.counterHits + opponentOverall.negativeCounterHits)).toFixed(2);
         opponentAverage.beneficialTradeRatio = (opponentOverall.beneficialTrades / (opponentOverall.beneficialTrades + opponentOverall.negativeTrades)).toFixed(2);
+
 
         res.send(stats);
 
     };
 
     return {
-        read
+        getStats
     }
 
 };
 
-module.exports = readController;
+module.exports = statsController;

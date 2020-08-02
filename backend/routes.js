@@ -15,8 +15,8 @@ const routes = (db) => {
     const parser = require('./controllers/parser-controller')(db);
     router.post('/save', upload.array('file'), parser.parse);
 
-    const reader = require('./controllers/read-controller')(db);
-    router.get('/', reader.read);
+    const statsController = require('./controllers/stats-controller')(db);
+    router.get('/:code', statsController.getStats);
 
     return {
         router
