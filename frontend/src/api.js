@@ -1,13 +1,12 @@
 import axios from 'axios';
 
 export default {
-  save: (data, player) => {
+  save: (data) => {
     return axios({
       method: 'POST',
       url: 'http://localhost:3000/slippi/save',
       headers: { 
-        'Access-Control-Allow-Origin': '*',
-        'Player': player 
+        'Access-Control-Allow-Origin': '*'
       },
       data
     });

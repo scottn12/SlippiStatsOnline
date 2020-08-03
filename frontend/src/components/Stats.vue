@@ -212,14 +212,16 @@ export default {
     reset() {
       let code = this.$route.params.code;
       if (!code) {
-        return '';
-      }
-      let codeFirstDigit = code.indexOf(code.match(/\d/));
-      if (codeFirstDigit == -1) {
-        this.code = code;
+        this.code = '';
       }
       else {
-        this.code = code.substring(0, codeFirstDigit).toLocaleUpperCase() + "#" + code.substring(codeFirstDigit);
+        let codeFirstDigit = code.indexOf(code.match(/\d/));
+        if (codeFirstDigit == -1) {
+          this.code = code;
+        }
+        else {
+          this.code = code.substring(0, codeFirstDigit).toLocaleUpperCase() + "#" + code.substring(codeFirstDigit);
+        }
       }
       this.characters = [];
       this.stages= [];

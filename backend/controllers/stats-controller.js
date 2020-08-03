@@ -1,3 +1,6 @@
+const { query } = require("express");
+const { characters } = require("@slippi/slippi-js");
+
 const statsController = (db) => {
 
     const characterList = ['captainfalcon', 'donkeykong', 'fox', 'mr.game&watch', 'kirby', 'bowser', 'link', 'luigi', 'mario', 'marth', 'mewtwo', 'ness', 'peach', 'pikachu', 'iceclimbers', 'jigglypuff', 'samus', 'yoshi', 'zelda', 'sheik', 'falco', 'younglink', 'dr.mario', 'roy', 'pichu', 'ganondorf'];
@@ -9,85 +12,98 @@ const statsController = (db) => {
     const getStats = async (req, res) => {
 
         // Setup query object
-        var data = {};
+        var data = {
+            $or: []
+        };
 
         /**
          * Check for valid input and find matching games, get player codes
          */
         // Get player codes
+        var code;
         if (req.params.code) {
-            var code;
             let codeFirstDigit = req.params.code.indexOf(req.params.code.match(/\d/));
             if (codeFirstDigit == -1) {
                 return res.status(400).send({ message: 'Invalid player code provided.' });
             }
             code = req.params.code.substring(0, codeFirstDigit).toLocaleUpperCase() + '#' + req.params.code.substring(codeFirstDigit);
-            data.code = code;
+            data.$or.push({ p1Code: code }, { p2Code: code });
         }
         else {
             return res.status(400).send({ message: 'Player code is required.' });
         }
 
+        var opponentCode;
         if (req.query.opponentCode) {
-            var opponentCode;
+            if (!data.$and) data.$and = [];
             let opponentCodeFirstDigit = req.query.opponentCode.indexOf(req.query.opponentCode.match(/\d/));
             if (opponentCodeFirstDigit == -1) {
                 return res.status(400).send({ message: 'Invalid opponent player code provided.' });
             }
             opponentCode = req.query.opponentCode.substring(0, opponentCodeFirstDigit).toLocaleUpperCase() + '#' + req.query.opponentCode.substring(opponentCodeFirstDigit);
-            data.opponentCode = opponentCode;
+            data.$and.push({ $or: [{ p1Code: opponentCode }, { p2Code: opponentCode }] });
         }
 
         // Get characters
+        var characters;
         if (req.query.characters) {
-            data.character = { $in: [] };
-            let err = false;
+            if (!data.$and) data.$and = [];
+            characters = [];
+            let err = false
             req.query.characters.forEach((character) => {
                 let charIndex = characterList.indexOf(character.toLocaleLowerCase());
                 if (charIndex == -1) {
                     err = true;
                 }
-                data.character.$in.push(charIndex);
+                characters.push(charIndex);
             });
             if (err) {
-                return res.status(400).send({ message: 'Invalid character.' });
+                return res.status(400).send({ message: 'Invalid opponent character.' });
             }
+            data.$and.push({ $or: [{ p1Character: { $in: characters } }, { p2Character: { $in: characters } }] });
         }
 
+        var opponentCharacters;
         if (req.query.opponentCharacters) {
-            data.opponentCharacter = { $in: [] };
+            if (!data.$and) data.$and = [];
+            opponentCharacters = [];
             let err = false
             req.query.opponentCharacters.forEach((character) => {
                 let charIndex = characterList.indexOf(character.toLocaleLowerCase());
                 if (charIndex == -1) {
                     err = true;
                 }
-                data.opponentCharacter.$in.push(charIndex);
+                opponentCharacters.push(charIndex);
             });
             if (err) {
                 return res.status(400).send({ message: 'Invalid opponent character.' });
             }
+            data.$and.push({ $or: [{ p1Character: { $in: opponentCharacters } }, { p2Character: { $in: opponentCharacters } }] });
         }
 
         // Get stage
+        var stages;
         if (req.query.stages) {
-            data.stage = { $in: [] };
+            if (!data.$and) data.$and = [];
+            stages = [];
             let err;
             req.query.stages.forEach((stage) => {
                 if (!(stage.toLocaleLowerCase() in stageList)) {
                     err = true;
                 }
-                data.stage.$in.push(stageList[stage.toLocaleLowerCase()]);
+                stages.push(stageList[stage.toLocaleLowerCase()]);
             });
             if (err) {
                 return res.status(400).send({ message: 'Invalid stage.' });
             }
+            data.$and.push({ stage: { $in: stages } });
         }
 
         // Check if LRAStart should be excluded
         if (req.query.excludeLRAStart) {
+            if (!data.$and) data.$and = [];
             if (req.query.excludeLRAStart == 'true') {
-                data.lraStart = false;
+                data.$and.push({ lraStart: false });
             }
         }
 
@@ -167,69 +183,160 @@ const statsController = (db) => {
         let playerOverall = stats.player.overall;
         let opponentOverall = stats.opponent.overall;
         games.forEach(game => {
-            // Skip filtered games
-            if (data.opponentCode && data.opponentCode != game.opponentCode) return;
-            if (data.character && data.character.$in.indexOf(game.character) == -1) return;
-            if (data.opponentCharacter && data.opponentCharacter.$in.indexOf(game.opponentCharacter) == -1) return;
-            if (data.stage && data.stage.$in.indexOf(game.stage) == -1) return;
 
-            // Get player data
-            if (game.tag && game.tag != '') {
-                stats.player.playerData.tag = game.tag;
-            }
-            if (!(game.opponentCode in stats.opponent.playerData)) {
-                stats.opponent.playerData[game.opponentCode] = game.tag;
-            }
-            else if (game.opponentCode in stats.opponent.playerData && game.opponentTag && game.opponentTag != '') {
-                stats.opponent.playerData[game.opponentCode] = game.opponentTag;
-            }
+            // Get player position
+            var playerIndex = -1;
+            var opponentIndex = -1;
 
-            // Accumulate overall stats
-            stats.numGames++;
-            if (game.timeout) {
-                stats.timeouts++;
-            }
-            if (game.win) {
-                playerOverall.wins++;
-                if (game.lraStart) {
-                    opponentOverall.lraStarts++;
+            if (!opponentCode) {
+                if (game.p1Code == code) {
+                    playerIndex = 0;
+                    opponentIndex = 1;
+                }
+                else if (game.p2Code == code) {
+                    playerIndex = 1;
+                    opponentIndex = 0;
                 }
             }
             else {
-                opponentOverall.wins++;
-                if (game.lraStart) {
-                    playerOverall.lraStarts++;
-                }
+                if (game.p1Code == code) playerIndex = 0;
+                else if (game.p2Code == code) playerIndex = 1;
+
+                if (game.p1Code == opponentCode) opponentIndex = 0;
+                else if (game.p2Code == opponentCode) opponentIndex = 1;
             }
 
-            playerOverall.stocksTaken += game.stocksTaken;
-            playerOverall.stockDifferential += game.stockDifferential;
-            playerOverall.totalDamage += game.totalDamage;
-            playerOverall.apm += game.apm;
-            playerOverall.openings += game.openings;
-            playerOverall.neutralWins += game.neutralWins;
-            playerOverall.neutralLosses += game.neutralLosses;
-            playerOverall.conversions += game.conversions;
-            playerOverall.missedConversions += game.missedConversions;
-            playerOverall.counterHits += game.counterHits;
-            playerOverall.negativeCounterHits += game.negativeCounterHits;
-            playerOverall.beneficialTrades += game.beneficialTrades;
-            playerOverall.negativeTrades += game.negativeTrades;
+            // Skip games that don't meet character or player criteria
+            if (playerIndex == -1 || opponentIndex == -1 || playerIndex == opponentIndex) return;
+            if (playerIndex == 0) {
+                if (characters && characters.indexOf(game.p1Character) == -1) return;
+                if (opponentCharacters && opponentCharacters.indexOf(game.p2Character) == -1) return;
+            }
+            else {
+                if (characters && characters.indexOf(game.p2Character) == -1) return;
+                if (opponentCharacters && opponentCharacters.indexOf(game.p1Character) == -1) return;
+            }
 
-            opponentOverall.stocksTaken += game.opponentStocksTaken;
-            opponentOverall.stockDifferential += game.opponentStockDifferential;
-            opponentOverall.totalDamage += game.opponentTotalDamage;
-            opponentOverall.apm += game.opponentApm;
-            opponentOverall.openings += game.opponentOpenings;
-            opponentOverall.neutralWins += game.opponentNeutralWins;
-            opponentOverall.neutralLosses += game.opponentNeutralLosses;
-            opponentOverall.conversions += game.opponentConversions;
-            opponentOverall.missedConversions += game.opponentMissedConversions;
-            opponentOverall.counterHits += game.opponentCounterHits;
-            opponentOverall.negativeCounterHits += game.opponentNegativeCounterHits;
-            opponentOverall.beneficialTrades += game.opponentBeneficialTrades;
-            opponentOverall.negativeTrades += game.opponentNegativeTrades;
+            /**
+             * Get stats from game record
+             */
 
+            if (playerIndex == 0) {
+                // Get player data
+                if (game.p1Tag && game.p1Tag != '') {
+                    stats.player.playerData.tag = game.p1Tag;
+                }
+                if (!(game.p2Tag in stats.opponent.playerData) && game.p2Tag && game.p2Tag != '') {
+                    stats.opponent.playerData[game.p2Code] = game.p2Tag;
+                }
+                else if (game.p2Tag in stats.opponent.playerData && game.p2Tag && game.p2Tag != '') {
+                    stats.opponent.playerData[game.p2Code] = game.p2Tag;
+                }
+
+                // Accumulate overall stats
+                stats.numGames++;
+                if (game.timeout) {
+                    stats.timeouts++;
+                }
+                if (game.win == 1) {
+                    playerOverall.wins++;
+                    if (game.lraStart) {
+                        opponentOverall.lraStarts++;
+                    }
+                }
+                else {
+                    opponentOverall.wins++;
+                    if (game.lraStart) {
+                        playerOverall.lraStarts++;
+                    }
+                }
+
+                playerOverall.stocksTaken += game.p1StocksTaken;
+                playerOverall.stockDifferential += game.p1StockDifferential;
+                playerOverall.totalDamage += game.p1TotalDamage;
+                playerOverall.apm += game.p1Apm;
+                playerOverall.openings += game.p1Openings;
+                playerOverall.neutralWins += game.p1NeutralWins;
+                playerOverall.neutralLosses += game.p1NeutralLosses;
+                playerOverall.conversions += game.p1Conversions;
+                playerOverall.missedConversions += game.p1MissedConversions;
+                playerOverall.counterHits += game.p1CounterHits;
+                playerOverall.negativeCounterHits += game.p1NegativeCounterHits;
+                playerOverall.beneficialTrades += game.p1BeneficialTrades;
+                playerOverall.negativeTrades += game.p1NegativeTrades;
+
+                opponentOverall.stocksTaken += game.p2StocksTaken;
+                opponentOverall.stockDifferential += game.p2StockDifferential;
+                opponentOverall.totalDamage += game.p2TotalDamage;
+                opponentOverall.apm += game.p2Apm;
+                opponentOverall.openings += game.p2Openings;
+                opponentOverall.neutralWins += game.p2NeutralWins;
+                opponentOverall.neutralLosses += game.p2NeutralLosses;
+                opponentOverall.conversions += game.p2Conversions;
+                opponentOverall.missedConversions += game.p2MissedConversions;
+                opponentOverall.counterHits += game.p2CounterHits;
+                opponentOverall.negativeCounterHits += game.p2NegativeCounterHits;
+                opponentOverall.beneficialTrades += game.p2BeneficialTrades;
+                opponentOverall.negativeTrades += game.p2NegativeTrades;
+            }
+            else {
+                // Get player data
+                if (game.p2Tag && game.p2Tag != '') {
+                    stats.player.playerData.tag = game.p2Tag;
+                }
+                if (!(game.p1Tag in stats.opponent.playerData) && game.p1Tag && game.p1Tag != '') {
+                    stats.opponent.playerData[game.p1Code] = game.p1Tag;
+                }
+                else if (game.p1Tag in stats.opponent.playerData && game.p1Tag && game.p1Tag != '') {
+                    stats.opponent.playerData[game.p1Code] = game.p1Tag;
+                }
+
+                // Accumulate overall stats
+                stats.numGames++;
+                if (game.timeout) {
+                    stats.timeouts++;
+                }
+                if (game.win == 2) {
+                    playerOverall.wins++;
+                    if (game.lraStart) {
+                        opponentOverall.lraStarts++;
+                    }
+                }
+                else {
+                    opponentOverall.wins++;
+                    if (game.lraStart) {
+                        playerOverall.lraStarts++;
+                    }
+                }
+
+                playerOverall.stocksTaken += game.p2StocksTaken;
+                playerOverall.stockDifferential += game.p2StockDifferential;
+                playerOverall.totalDamage += game.p2TotalDamage;
+                playerOverall.apm += game.p2Apm;
+                playerOverall.openings += game.p2Openings;
+                playerOverall.neutralWins += game.p2NeutralWins;
+                playerOverall.neutralLosses += game.p2NeutralLosses;
+                playerOverall.conversions += game.p2Conversions;
+                playerOverall.missedConversions += game.p2MissedConversions;
+                playerOverall.counterHits += game.p2CounterHits;
+                playerOverall.negativeCounterHits += game.p2NegativeCounterHits;
+                playerOverall.beneficialTrades += game.p2BeneficialTrades;
+                playerOverall.negativeTrades += game.p2NegativeTrades;
+
+                opponentOverall.stocksTaken += game.p1StocksTaken;
+                opponentOverall.stockDifferential += game.p1StockDifferential;
+                opponentOverall.totalDamage += game.p1TotalDamage;
+                opponentOverall.apm += game.p1Apm;
+                opponentOverall.openings += game.p1Openings;
+                opponentOverall.neutralWins += game.p1NeutralWins;
+                opponentOverall.neutralLosses += game.p1NeutralLosses;
+                opponentOverall.conversions += game.p1Conversions;
+                opponentOverall.missedConversions += game.p1MissedConversions;
+                opponentOverall.counterHits += game.p1CounterHits;
+                opponentOverall.negativeCounterHits += game.p1NegativeCounterHits;
+                opponentOverall.beneficialTrades += game.p1BeneficialTrades;
+                opponentOverall.negativeTrades += game.p1NegativeTrades;
+            }
         });
 
         /**
@@ -259,9 +366,7 @@ const statsController = (db) => {
         opponentAverage.beneficialCounterHitRatio = (opponentOverall.counterHits / (opponentOverall.counterHits + opponentOverall.negativeCounterHits)).toFixed(2);
         opponentAverage.beneficialTradeRatio = (opponentOverall.beneficialTrades / (opponentOverall.beneficialTrades + opponentOverall.negativeTrades)).toFixed(2);
 
-
         res.send(stats);
-
     };
 
     return {
