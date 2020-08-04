@@ -25,6 +25,7 @@ const parserController = (db) => {
                         lraStart: false,  // Assumed to be false
                         timeout: false,  // Assumed to be false
                         stage: undefined,
+                        date: undefined,
                     
                         p1Code: undefined,
                         p1Tag: undefined,
@@ -66,7 +67,7 @@ const parserController = (db) => {
                     let game = new SlippiGame(content);
 
                     /**
-                     * Check for players, determine player index, code, tag
+                     * Check for players, determine player index, code, tag, date
                      */
                     let metadata = game.getMetadata();
                     if (!metadata.players['0'].names.code || !metadata.players['1'].names.code) {
@@ -79,6 +80,9 @@ const parserController = (db) => {
                     gameData.p1Tag = metadata.players[0].names.netplay;
                     gameData.p2Code = metadata.players[1].names.code;
                     gameData.p2Tag = metadata.players[1].names.netplay;
+
+                    gameData.date = metadata.startAt;
+
 
                     /**
                      * Check for valid game settings, get stage and characters

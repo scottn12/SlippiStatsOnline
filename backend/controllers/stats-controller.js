@@ -58,7 +58,7 @@ const statsController = (db) => {
                 characters.push(charIndex);
             });
             if (err) {
-                return res.status(400).send({ message: 'Invalid opponent character.' });
+                return res.status(400).send({ message: 'Invalid character.' });
             }
             data.$and.push({ $or: [{ p1Character: { $in: characters } }, { p2Character: { $in: characters } }] });
         }
@@ -105,6 +105,16 @@ const statsController = (db) => {
             if (req.query.excludeLRAStart == 'true') {
                 data.$and.push({ lraStart: false });
             }
+        }
+
+        // Get dates
+        if (req.query.dates) {
+            if (!data.$and) data.$and = [];
+            let dates = req.query.dates;
+            if (dates.length == 1) {
+                dates.push(new Date());
+            }
+            data.$and.push({ 'date': { '$gte': dates[0], '$lt': dates[1] } });
         }
 
         let games = await db.getGame(data);

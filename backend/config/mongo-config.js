@@ -7,6 +7,7 @@ const GameSchema = new Schema({
     lraStart: Boolean,
     timeout: Boolean,
     stage: Number,
+    date: Date,
 
     p1Code: String,
     p1Tag: String,
