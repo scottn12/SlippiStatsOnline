@@ -1,14 +1,14 @@
 <template>
   <v-app>
     <v-app-bar app color="primary" dark>
-      <v-toolbar-title>Slippi Stats</v-toolbar-title>
+      <v-toolbar-title @click="$router.push({ path: '/' })">Slippi Stats</v-toolbar-title>
       <v-spacer></v-spacer>
 
-      <v-btn color="secondary" class="ma-2 white--text" @click="$router.push({ path: '/' })">
+      <v-btn light class="ma-2" @click="$router.push({ path: '/' })">
         <v-icon left dark>mdi-cloud-upload</v-icon>Upload Games
       </v-btn>
 
-      <v-btn color="secondary" class="ma-2 white--text" @click="$router.push({ path: '/stats' })">
+      <v-btn light class="ma-2" @click="$router.push({ path: '/stats' })">
         <v-icon left dark>mdi-magnify</v-icon>View Stats
       </v-btn>
 

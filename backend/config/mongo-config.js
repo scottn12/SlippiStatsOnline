@@ -8,6 +8,7 @@ const GameSchema = new Schema({
     timeout: Boolean,
     stage: Number,
     date: Date,
+    numFrames: Number,
 
     p1Code: String,
     p1Tag: String,

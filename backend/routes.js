@@ -13,7 +13,7 @@ const upload = multer({ storage });
 const routes = (db) => {
 
     const parser = require('./controllers/parser-controller')(db);
-    router.post('/save', upload.array('file'), parser.parse);
+    router.post('/save', upload.array('files'), parser.parse);
 
     const statsController = require('./controllers/stats-controller')(db);
     router.get('/:code', statsController.getStats);

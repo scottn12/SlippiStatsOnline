@@ -4,7 +4,7 @@ const { characters } = require("@slippi/slippi-js");
 const statsController = (db) => {
 
     const characterList = ['captainfalcon', 'donkeykong', 'fox', 'mr.game&watch', 'kirby', 'bowser', 'link', 'luigi', 'mario', 'marth', 'mewtwo', 'ness', 'peach', 'pikachu', 'iceclimbers', 'jigglypuff', 'samus', 'yoshi', 'zelda', 'sheik', 'falco', 'younglink', 'dr.mario', 'roy', 'pichu', 'ganondorf'];
-    const stageList = { 'fountainofdreams': 2, 'pokemonstadium': 3, "yoshisstory": 8, 'dreamland': 28, 'battlefield': 31, 'finaldestination': 32 };
+    const stageList = { 'fountainofdreams': 2, 'pokemonstadium': 3, "yoshi'sstory": 8, 'dreamland': 28, 'battlefield': 31, 'finaldestination': 32 };
     const cleanCharacters = ['Captain Falcon', 'Donkey Kong', 'Fox', 'Mr. Game & Watch', 'Kirby', 'Bowser', 'Link', 'Luigi', 'Mario', 'Marth', 'Mewtwo', 'Ness', 'Peach', 'Pikachu', 'Ice Climbers', 'Jigglypuff', 'Samus', 'Yoshi', 'Zelda', 'Sheik', 'Falco', 'Young Link', 'Dr. Mario', 'Roy', 'Pichu', 'Ganondorf']
     const cleanStages = { 2: 'Fountain of Dreams', 3: 'Pokemon Stadium', 8: "Yoshi's Story", 28: 'Dreamland', 31: 'Battlefield', 32: 'Final Destination' };
 
@@ -126,6 +126,7 @@ const statsController = (db) => {
         var stats = {
             numGames: 0,
             timeouts: 0,
+            totalNumFrames: 0,
             player: {
                 playerData: { code: data.code, tag: undefined },
                 overall: {
@@ -155,6 +156,7 @@ const statsController = (db) => {
                     conversionRatio: undefined,
                     beneficialCounterHitRatio: undefined,
                     beneficialTradeRatio: undefined,
+                    killPercent: undefined
                 }
             },
             opponent: {
@@ -186,6 +188,7 @@ const statsController = (db) => {
                     conversionRatio: undefined,
                     beneficialCounterHitRatio: undefined,
                     beneficialTradeRatio: undefined,
+                    killPercent: undefined
                 }
             }
         };
@@ -245,6 +248,7 @@ const statsController = (db) => {
 
                 // Accumulate overall stats
                 stats.numGames++;
+                stats.totalNumFrames += game.numFrames;
                 if (game.timeout) {
                     stats.timeouts++;
                 }
@@ -365,6 +369,7 @@ const statsController = (db) => {
         playerAverage.conversionRatio = (playerOverall.conversions / (playerOverall.conversions + playerOverall.missedConversions)).toFixed(2);
         playerAverage.beneficialCounterHitRatio = (playerOverall.counterHits / (playerOverall.counterHits + playerOverall.negativeCounterHits)).toFixed(2);
         playerAverage.beneficialTradeRatio = (playerOverall.beneficialTrades / (playerOverall.beneficialTrades + playerOverall.negativeTrades)).toFixed(2);
+        playerAverage.killPercent = (playerOverall.totalDamage / playerOverall.stocksTaken).toFixed(2);
 
         opponentAverage.stocksTaken = (opponentOverall.stocksTaken / stats.numGames).toFixed(2);
         opponentAverage.stockDifferential = (opponentOverall.stockDifferential / opponentOverall.wins).toFixed(2);
@@ -375,6 +380,7 @@ const statsController = (db) => {
         opponentAverage.conversionRatio = (opponentOverall.conversions / (opponentOverall.conversions + opponentOverall.missedConversions)).toFixed(2);
         opponentAverage.beneficialCounterHitRatio = (opponentOverall.counterHits / (opponentOverall.counterHits + opponentOverall.negativeCounterHits)).toFixed(2);
         opponentAverage.beneficialTradeRatio = (opponentOverall.beneficialTrades / (opponentOverall.beneficialTrades + opponentOverall.negativeTrades)).toFixed(2);
+        opponentAverage.killPercent = (opponentOverall.totalDamage / opponentOverall.stocksTaken).toFixed(2);
 
         res.send(stats);
     };

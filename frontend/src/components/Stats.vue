@@ -32,7 +32,7 @@
                         outlined
                         v-model="characters"
                         :items="characterList"
-                        label="Characters"
+                        label="Your Characters"
                       >
                         <template v-slot:selection="selection">
                           <v-chip v-bind="selection.attrs" @click="removeCharacter(selection.item)">
@@ -97,7 +97,7 @@
                         :items="stageList"
                         label="Stages"
                       >
-                        <template v-slot:selection="{item, index, attrs}">
+                        <template v-slot:selection="{item, attrs}">
                           <v-chip v-bind="attrs" @click="removeStage(item)">{{ item }}</v-chip>
                         </template>
                         <template v-slot:item="selection">{{ selection.item }}</template>
@@ -224,8 +224,7 @@
                             </template>
                             <span>
                               Leave checked to serach games matching the criteria regardless of date.
-                              <br>
-                              Uncheck to pick a date range. Selecting one date will search from that date to present, two dates will search between those dates.
+                              <br />Uncheck to pick a date range. Selecting one date will search from that date to present, two dates will search between those dates.
                             </span>
                           </v-tooltip>
                         </v-row>
@@ -245,8 +244,7 @@
                     </v-row>
                   </v-col>
                 </v-row>
-
-                <v-row dense justify="center">
+                <v-row no-gutters justify="center">
                   <v-btn style="margin-right: 15px;" color="normal" @click="reset()">Reset</v-btn>
                   <v-btn :disabled="!valid" color="success" @click="getStats()">Search</v-btn>
                 </v-row>
@@ -259,47 +257,37 @@
     <br />
     <v-row v-if="stats && stats.numGames == 0" justify="center" no-gutters>
       <v-col cols="5">
-        <v-alert type="error" class="text-center">
+        <v-alert type="error" class="text-center" color="#e33a0b">
           No games found with search criteria.
-          <router-link to="/">Click here</router-link> to upload more slippi files.
+          <router-link style="color: white;" to="/">Click here</router-link> to upload more slippi files.
         </v-alert>
       </v-col>
     </v-row>
     <div v-if="stats && stats.numGames > 0">
       <v-row no-gutters justify="center">
         <v-col cols="3" justify="center">
-          <v-alert type="success" class="text-center">
-            {{ stats.numGames}} games found
-            <span v-if="stats.timeouts > 0">
-              ({{ stats.timeouts }} timeout
-              <span v-if="stats.timeouts > 1">s</span>)
-            </span>!
+          <v-alert type="success" class="text-center" color="#44A963">
+            {{ stats.numGames}} games found<span v-if="stats.timeouts > 0">({{ stats.timeouts }} timeout<span v-if="stats.timeouts > 1">s</span>)</span>!
           </v-alert>
         </v-col>
       </v-row>
+      <v-row no-gutters justify="center">
+        <v-tooltip right v-model="showShareToolTip">
+          <template v-slot:activator="{}">
+            <v-btn outlined color="#44A963" @click="share()">Share</v-btn>
+          </template>
+          <span>
+            URL copied to clipboard!
+          </span>
+        </v-tooltip>
+
+      </v-row>
       <v-row no-gutters justify="space-around">
-        <v-card class="mx-auto" max-width="40%">
-          <v-card-title
-            class="justify-center"
-          >{{ stats.player.playerData.tag ? stats.player.playerData.tag : stats.player.playerData.code }}'s Stats</v-card-title>
-          <v-card-title class="font-weight-regular">Summary</v-card-title>
-          <v-card-text class="text--primary">
-            {{ stats.player.overall.wins }}
-            <span style="color: #4caf50;">W</span>
-            - {{ stats.numGames - stats.player.overall.wins }}
-            <span
-              style="color: red;"
-            >L</span>
-            ({{ Math.round(stats.player.overall.wins / stats.numGames * 100) }}%)
-            {{ }}
-          </v-card-text>
-        </v-card>
-        <v-card class="mx-auto" max-width="40%">
-          <v-card-title
-            class="justify-center"
-          >{{ stats && submittedOpponentCode ? (stats.opponent.playerData[submittedOpponentCode] ? stats.opponent.playerData[submittedOpponentCode] : submittedOpponentCode) : 'Opponent' }}'s Stats</v-card-title>
-          <v-card-text>{{stats.opponent.average}}</v-card-text>
-        </v-card>
+        <StatsCard
+          :stats="stats"
+          :playerTag="stats.player.playerData.tag ? stats.player.playerData.tag : stats.player.playerData.code"
+          :opponentTag="stats && submittedOpponentCode ? (stats.opponent.playerData[submittedOpponentCode] ? stats.opponent.playerData[submittedOpponentCode] : submittedOpponentCode) : 'Opponent'"
+        />
       </v-row>
     </div>
   </v-container>
@@ -307,11 +295,12 @@
 
 <script>
 import API from "../api";
+import StatsCard from "./StatsCard";
 
 export default {
   name: "Stats",
-  props: {
-    source: String,
+  components: {
+    StatsCard,
   },
   data: () => ({
     characterList: [
@@ -349,6 +338,41 @@ export default {
       "Pokemon Stadium",
       "Yoshi's Story",
     ],
+    characterListLower: [
+      "bowser",
+      "captainfalcon",
+      "donkeykong",
+      "dr.mario",
+      "falco",
+      "fox",
+      "ganondorf",
+      "iceclimbers",
+      "jigglypuff",
+      "kirby",
+      "link",
+      "luigi",
+      "mario",
+      "marth",
+      "mewtwo",
+      "mr.game&watch",
+      "ness",
+      "peach",
+      "pichu",
+      "pikachu",
+      "roy",
+      "samus",
+      "sheik/zelda",
+      "yoshi",
+      "younglink",
+    ],
+    stageListLower: [
+      "battlefield",
+      "dreamland",
+      "finaldestination",
+      "fountainofdreams",
+      "pokemonstadium",
+      "yoshi'sstory",
+    ],
     panel: 0,
     panelOpening: true,
     valid: false,
@@ -362,7 +386,10 @@ export default {
     submittedOpponentCode: undefined,
     searchAllTime: true,
     dates: [],
-    allowedDates: (val) => new Date(new Date(val).toLocaleDateString()) < new Date(new Date().toLocaleDateString()),
+    showShareToolTip: false,
+    allowedDates: (val) =>
+      new Date(new Date(val).toLocaleDateString()) <
+      new Date(new Date().toLocaleDateString()),
     codeRules: [
       (v) => !!v || v != "" || "Player code is required",
       (v) =>
@@ -390,11 +417,108 @@ export default {
       }
       this.$refs.form.validate();
     }
+
+    let opponentCode = this.$route.query.opponentCode;
+    if (opponentCode) {
+      let codeFirstDigit = opponentCode.indexOf(opponentCode.match(/\d/));
+      if (codeFirstDigit == -1) {
+        this.opponentCode = opponentCode;
+      } else {
+        this.opponentCode =
+          opponentCode.substring(0, codeFirstDigit).toLocaleUpperCase() +
+          "#" +
+          opponentCode.substring(codeFirstDigit);
+      }
+      this.$refs.form.validate();
+    }
+
+    let characters = this.$route.query.characters;
+    if (characters) {
+      if (!Array.isArray(characters)) {
+        characters = [characters];
+      }
+      characters.forEach((character) => {
+        if (character.toLocaleLowerCase() == 'sheik' || character.toLocaleLowerCase() == 'zelda') {
+          if (this.characters.indexOf('Sheik / Zelda') == -1) {
+            this.characters.push('Sheik / Zelda');
+          }
+        }
+        else {
+          let i = this.characterListLower.indexOf(character.toLocaleLowerCase());
+          if (i != -1 && this.characters.indexOf(this.characterList[i]) == -1) {
+            this.characters.push(this.characterList[i]);
+          }
+        }
+      });
+    }
+
+    let opponentCharacters = this.$route.query.opponentCharacters;
+    if (opponentCharacters) {
+      if (!Array.isArray(opponentCharacters)) {
+        opponentCharacters = [opponentCharacters];
+      }
+      opponentCharacters.forEach((character) => {
+        if (character.toLocaleLowerCase() == 'sheik' || character.toLocaleLowerCase() == 'zelda') {
+          if (this.opponentCharacters.indexOf('Sheik / Zelda') == -1) {
+            this.opponentCharacters.push('Sheik / Zelda');
+          }
+        }
+        else {
+          let i = this.characterListLower.indexOf(character.toLocaleLowerCase());
+          if (i != -1 && this.opponentCharacters.indexOf(this.characterList[i]) == -1) {
+            this.opponentCharacters.push(this.characterList[i]);
+          }
+        }
+      });
+    }
+
+    let stages = this.$route.query.stages;
+    if (stages) {
+      if (!Array.isArray(stages)) {
+        stages = [stages];
+      }
+      stages.forEach((stage) => {
+        let i = this.stageListLower.indexOf(stage.toLocaleLowerCase());
+        if (i != -1 && this.stages.indexOf(this.stageList[i]) == -1) {
+          this.stages.push(this.stageList[i]);
+        }
+      });
+    }
+
+    let dates = this.$route.query.dates;
+    if (dates) {
+      if (!Array.isArray(dates)) {
+        dates = [dates];
+      }
+      dates.forEach((date) => {
+        try {
+          Date.parse(date);
+        }
+        catch (e) {
+          return;
+        }
+        if (this.dates.indexOf(date) == -1) {
+          this.searchAllTime = false;
+          this.dates.push(date);
+        }
+      });
+    }
+
+    let excludeLRAStart = this.$route.query.excludeLRAStart;
+    if (excludeLRAStart) {
+      this.excludeLRAStart = true;
+    }
+ 
+    // If the code is provided, excecute a search right away
+    if (code) {
+      this.getStats();
+    }
+
   },
   methods: {
     getStats() {
-      let code = this.code.replace("#", ""); // Remove # for api request
       let data = {};
+      let code = this.code.replace("#", ""); // Remove # for api request
       if (this.code.indexOf("#") == -1) {
         // Add # for display if not provided
         let codeFirstDigit = code.indexOf(this.code.match(/\d/));
@@ -424,23 +548,27 @@ export default {
       }
       this.submittedOpponentCode = this.opponentCode;
       if (this.excludeLRAStart) data.excludeLRAStart = true;
-      if (this.stages.length > 0)
-        data.stages = this.stages.map((str) => str.replace(/\s/g, ""));
+      if (this.stages.length > 0) data.stages = this.stages.map((str) => str.replace(/\s/g, ""));
+
       if (this.characters.length > 0) {
-        let characters = this.characters;
+        let characters = this.characters.slice();
         let index = characters.indexOf("Sheik / Zelda");
-        if (index != -1) this.characters.splice(index, 1);
-        characters.push("Sheik", "Zelda");
+        if (index != -1) {
+          characters.splice(index, 1);
+          characters.push("Sheik");
+          characters.push("Zelda");
+        }
         data.characters = characters.map((str) => str.replace(/\s/g, ""));
       }
       if (this.opponentCharacters.length > 0) {
-        let characters = this.opponentCharacters;
-        let index = characters.indexOf("Sheik / Zelda");
+        let opponentCharacters = this.opponentCharacters.slice();
+        let index = opponentCharacters.indexOf("Sheik / Zelda");
         if (index != -1) {
-          this.characters.splice(index, 1);
-          characters.push("Sheik", "Zelda");
+          opponentCharacters.splice(index, 1);
+          opponentCharacters.push("Sheik");
+          opponentCharacters.push("Zelda");
         }
-        data.opponentCharacters = characters.map((str) =>
+        data.opponentCharacters = opponentCharacters.map((str) =>
           str.replace(/\s/g, "")
         );
       }
@@ -456,6 +584,7 @@ export default {
           if (this.stats.numGames > 0) {
             this.panelOpening = false;
             this.panel = undefined;
+            this.$router.replace({ path: '/stats/' + code, query: data}).catch(()=>{});
           }
         })
         .catch((err) => {
@@ -515,6 +644,19 @@ export default {
         this.dates.splice(0, 1);
         this.dates = this.dates.sort();
       }
+    },
+    share() {
+      let url = window.location.origin + "/" + this.$route.fullPath;
+      const el = document.createElement('textarea');
+      el.value = url;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      this.showShareToolTip = true;
+      setTimeout(() => {
+        this.showShareToolTip = false;
+      }, 2000);
     }
   },
 };

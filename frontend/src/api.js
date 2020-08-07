@@ -1,14 +1,15 @@
 import axios from 'axios';
 
 export default {
-  save: (data) => {
+  save: (data, onUploadProgress) => {
     return axios({
       method: 'POST',
       url: 'http://localhost:3000/slippi/save',
       headers: { 
         'Access-Control-Allow-Origin': '*'
       },
-      data
+      data,
+      onUploadProgress: ProgressEvent => onUploadProgress(ProgressEvent)
     });
   },
   getStats: (code, params) => {

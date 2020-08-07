@@ -12,6 +12,8 @@ const parserController = (db) => {
         var success = 0;
 
         for (const file of req.files) {
+            
+        
             var path = file.path;
 
             await fs.createReadStream(path)
@@ -82,6 +84,7 @@ const parserController = (db) => {
                     gameData.p2Tag = metadata.players[1].names.netplay;
 
                     gameData.date = metadata.startAt;
+                    gameData.numFrames = metadata.lastFrame;
 
 
                     /**
