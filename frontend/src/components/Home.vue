@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-flex row wrap class="justify-space-around">
+    <v-flex row wrap class="justify-space-around" style="margin-top: 15px;">
       <div style="width: 50%;">
         <v-card class="mx-auto justify-center">
           <v-card-title class="header">About</v-card-title>
@@ -107,9 +107,20 @@
                 <v-icon v-if="viewDetails" dark right>mdi-chevron-down</v-icon>
               </v-btn>
             </div>
-            <div v-if="viewDetails" style="margin-top: 5px;">
-              <div v-for="(file, index) in results.badFiles" :key="index">
-                <strong>{{ file.file }}</strong> - {{ file.reason }}
+            <div v-if="viewDetails" style="margin-top: 5px; margin-left: 5%; margin-right: 5%; font-size: 16px;">
+              <div v-for="(file, index) in badFiles" :key="index">
+                {{ index }} ({{ badFiles[index].length }})
+                <v-btn icon v-if="openReasons.indexOf(index) == -1" @click="openReasons.push(index)">
+                  <v-icon dark>mdi-chevron-right</v-icon>
+                </v-btn>
+                <v-btn icon v-if="openReasons.indexOf(index) != -1" @click="openReasons.splice(openReasons.indexOf(index), 1)">
+                  <v-icon dark>mdi-chevron-down</v-icon>
+                </v-btn>
+                <ul v-if="openReasons.indexOf(index) != -1" style="font-size: 14px; margin-left: 5%; margin-rigth: 5%;">
+                  <li v-for="(file, i) in badFiles[index]" :key="i"> 
+                    {{ file }}
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
@@ -135,7 +146,9 @@ export default {
     hover: false,
     fileError: undefined,
     results: undefined,
-    viewDetails: false
+    viewDetails: false,
+    badFiles: {},
+    openReasons: []
   }),
   methods: {
     checkFileType() {
@@ -151,6 +164,8 @@ export default {
     },
     send() {
       this.results = undefined;
+      this.badFiles = {};
+      this.openReasons = [];
       var data = new FormData();
       this.files.forEach((file) => {
         data.append("files", file);
@@ -162,6 +177,14 @@ export default {
           this.progress = undefined;
           this.waiting = false;
           this.results = response.data;
+          this.results.badFiles.forEach((file) => {
+            if (file.reason in this.badFiles) {
+              this.badFiles[file.reason].push(file.file);
+            }
+            else {
+              this.badFiles[file.reason] = [file.file];
+            }
+          });
         })
         .catch((err) => {
           console.log(err);
