@@ -90,7 +90,12 @@
         </v-hover>
         <v-card v-if="results" class="mx-auto justify-center" style="margin-top: 25px;">
           <v-card-title class="justify-center">Upload Results</v-card-title>
-          <div style="margin-left: 5%; margin-right: 5%; padding-bottom: 15px;">
+          <div v-if="results == 'error'" style="margin-left: 15%; margin-right: 15%; padding-bottom: 10px;">
+            <v-alert  type="error" class="text-center" color="#e33a0b">
+              Unkonwn error occured. Please try again later.
+            </v-alert>
+          </div>
+          <div v-if="results != 'error'" style="margin-left: 5%; margin-right: 5%; padding-bottom: 15px;">
             <div>
               <span style="font-size: 28px; color: #44A963">{{ results.success }}</span> games uploaded succesfully
             </div>
@@ -160,6 +165,7 @@ export default {
         })
         .catch((err) => {
           console.log(err);
+          this.results = 'error';
         });
     },
     onProgressUpdate(update) {

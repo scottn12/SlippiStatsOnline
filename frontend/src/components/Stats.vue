@@ -263,6 +263,13 @@
         </v-alert>
       </v-col>
     </v-row>
+    <v-row v-if="error" justify="center" no-gutters>
+      <v-col cols="5">
+        <v-alert type="error" class="text-center" color="#e33a0b">
+          Unknown error occured. Please try again later.
+        </v-alert>
+      </v-col>
+    </v-row>
     <div v-if="stats && stats.numGames > 0">
       <v-row no-gutters justify="center">
         <v-col cols="3" justify="center">
@@ -387,6 +394,7 @@ export default {
     searchAllTime: true,
     dates: [],
     showShareToolTip: false,
+    error: false,
     allowedDates: (val) =>
       new Date(new Date(val).toLocaleDateString()) <
       new Date(new Date().toLocaleDateString()),
@@ -517,6 +525,7 @@ export default {
   },
   methods: {
     getStats() {
+      this.error = false;
       let data = {};
       let code = this.code.replace("#", ""); // Remove # for api request
       if (this.code.indexOf("#") == -1) {
@@ -588,6 +597,7 @@ export default {
           }
         })
         .catch((err) => {
+          this.error = true;
           console.log(err);
         });
     },
