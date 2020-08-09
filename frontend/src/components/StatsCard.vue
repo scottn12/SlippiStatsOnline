@@ -10,8 +10,11 @@
               <div>
                 <span style="font-size: 28px; color: #44A963">{{ stats.numGames }}</span> games
               </div>
-              <div>
-                <span style="font-size: 24px;">{{ timePlayed }}</span> hours played
+              <div v-if="!timeInMinutes">
+                <span style="font-size: 24px;" >{{ timePlayed }}</span> hour<span v-if="timePlayed != 1">s</span> played
+              </div>
+              <div v-if="timeInMinutes">
+                <span style="font-size: 24px;" >{{ timePlayed }}</span> minute<span v-if="timePlayed != 1">s</span> played
               </div>
               <div>
                 <span
@@ -234,7 +237,21 @@
         <v-row no-gutters justify="space-around" style="margin-top: 20px;">
           <v-col cols="3">
             <div class="chartTitle">
-              Total Damage Dealt
+              4 Stocks
+              <v-tooltip right v-if="stats.player.overall.lraStarts + stats.opponent.overall.lraStarts > 0">
+                <template v-slot:activator="{on, attrs}">
+                  <v-icon
+                    v-bind="attrs"
+                    v-on="on"
+                    style="margin-bottom: 3px;"
+                  >mdi-information</v-icon>
+                </template>
+                <span>
+                  Note: This may include games that ended in a L+R+A+Start.
+                  <br>
+                  Choose the "Exclude all games ending with L+R+A+Start" option to get a more accurate representation.
+                </span>
+              </v-tooltip>
             </div>
             <div class="barLegend">
               <v-chip
@@ -247,7 +264,7 @@
             </div>
             <BarChart
               :height="200"
-              :chartData="[Math.round(stats.player.overall.totalDamage), Math.round(stats.opponent.overall.totalDamage)]"
+              :chartData="[stats.player.overall.fourStocks, stats.opponent.overall.fourStocks]"
               :tags="[playerTag, opponentTag]"
               :percentage="false"
             />
@@ -329,8 +346,20 @@ export default {
   computed: {
     timePlayed() {
       let frames = this.stats.totalNumFrames;
-      return Math.round(frames / 60 / 60 / 60);
+      let hours = Math.round(frames / 60 / 60 / 60);
+      if (hours == 0) {
+        let minutes = Math.round(frames / 60 / 60);
+        if (minutes == 0) {
+          return 1;
+        }
+        return minutes;
+      }
+      return hours;
     },
+    timeInMinutes() {
+      let frames = this.stats.totalNumFrames;
+      return Math.round(frames / 60 / 60/ 60) == 0;
+    }
   },
 };
 </script>

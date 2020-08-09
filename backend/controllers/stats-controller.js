@@ -144,7 +144,8 @@ const statsController = (db) => {
                     counterHits: 0,
                     negativeCounterHits: 0,
                     beneficialTrades: 0,
-                    negativeTrades: 0
+                    negativeTrades: 0,
+                    fourStocks: 0
                 },
                 average: {
                     stocksTaken: undefined,
@@ -176,7 +177,8 @@ const statsController = (db) => {
                     counterHits: 0,
                     negativeCounterHits: 0,
                     beneficialTrades: 0,
-                    negativeTrades: 0
+                    negativeTrades: 0,
+                    fourStocks: 0
                 },
                 average: {
                     stocksTaken: undefined,
@@ -265,6 +267,14 @@ const statsController = (db) => {
                     }
                 }
 
+                // Check for 4 stock
+                if (game.p1StockDifferential == 4) {
+                    playerOverall.fourStocks++;
+                }
+                else if (game.p2StockDifferential == 4) {
+                    opponentOverall.fourStocks++;
+                }
+
                 playerOverall.stocksTaken += game.p1StocksTaken;
                 playerOverall.stockDifferential += game.p1StockDifferential;
                 playerOverall.totalDamage += game.p1TotalDamage;
@@ -321,6 +331,14 @@ const statsController = (db) => {
                     if (game.lraStart) {
                         playerOverall.lraStarts++;
                     }
+                }
+
+                // Check for 4 stock
+                if (game.p2StockDifferential == 4) {
+                    playerOverall.fourStocks++;
+                }
+                else if (game.p1StockDifferential == 4) {
+                    opponentOverall.fourStocks++;
                 }
 
                 playerOverall.stocksTaken += game.p2StocksTaken;

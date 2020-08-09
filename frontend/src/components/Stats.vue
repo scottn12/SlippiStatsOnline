@@ -593,7 +593,7 @@ export default {
           if (this.stats.numGames > 0) {
             this.panelOpening = false;
             this.panel = undefined;
-            this.$router.replace({ path: '/stats/' + code, query: data}).catch(()=>{});
+            this.$router.replace({ path: '/slippi/stats/' + code, query: data}).catch(()=>{});
           }
         })
         .catch((err) => {

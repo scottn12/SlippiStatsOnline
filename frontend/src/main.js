@@ -10,9 +10,9 @@ Vue.use(VueRouter);
 const router = new VueRouter({
   mode: 'history',
   routes: [
-    { path: '/', component: Home },
-    { path: '/stats', component: Stats },
-    { path: '/stats/:code', component: Stats }
+    { path: '/slippi', component: Home },
+    { path: '/slippi/stats', component: Stats },
+    { path: '/slippi/stats/:code', component: Stats }
   ]
 });
 
