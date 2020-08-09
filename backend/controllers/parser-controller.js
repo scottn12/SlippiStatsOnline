@@ -1,3 +1,4 @@
+const logger = require('../config/logger');
 const { default: SlippiGame } = require('@slippi/slippi-js');
 const fs = require('fs');
 const unzipper = require('unzipper');

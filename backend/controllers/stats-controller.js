@@ -1,5 +1,4 @@
-const { query } = require("express");
-const { characters } = require("@slippi/slippi-js");
+const logger = require('../config/logger');
 
 const statsController = (db) => {
 
