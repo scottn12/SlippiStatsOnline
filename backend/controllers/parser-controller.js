@@ -12,6 +12,10 @@ const parserController = (db) => {
         var success = 0;
         var badFiles = [];
 
+        if (!req.files || req.files.length == 0) {
+            return res.status(400).send({ message: 'No files provided' });
+        }
+
         for (const file of req.files) {
 
             var path = file.path;
@@ -59,29 +63,29 @@ const parserController = (db) => {
 
         await new Promise(async (resolve) => {
             fs.createReadStream(path)
-            .pipe(unzipper.Parse())
-            .on('entry', async entry => {
+                .pipe(unzipper.Parse())
+                .on('entry', async entry => {
 
-                totalGames++;
+                    totalGames++;
 
-                // Get Game Data
-                const content = await entry.buffer();
-                var game = new SlippiGame(content);
+                    // Get Game Data
+                    const content = await entry.buffer();
+                    var game = new SlippiGame(content);
 
-                var result = await parseGame(game, entry.path);
-                if (result.success) {
-                    success++;
-                }
-                else {
-                    badFiles.push(result.badFile);
-                }
+                    var result = await parseGame(game, entry.path);
+                    if (result.success) {
+                        success++;
+                    }
+                    else {
+                        badFiles.push(result.badFile);
+                    }
 
-                await entry.autodrain();
+                    await entry.autodrain();
 
-                if (totalGames == success + badFiles.length) {  // Check if all games are done
-                    resolve();
-                }
-            });
+                    if (totalGames == success + badFiles.length) {  // Check if all games are done
+                        resolve();
+                    }
+                });
         });
         return { success, badFiles };
     }
@@ -90,7 +94,7 @@ const parserController = (db) => {
 
         var game = new SlippiGame(path);
         return await parseGame(game, path);
-        
+
     }
 
     const parseGame = async (game, path) => {
@@ -148,7 +152,7 @@ const parserController = (db) => {
             let metadata = game.getMetadata();
             if (!metadata.players['0'].names.code || !metadata.players['1'].names.code) {
                 badFile = { file: path.replace(/^.*[\\\/]/, ''), reason: `Player code missing for one or both players.` };
-                return {success, badFile};  // Skip game if desired player not found
+                return { success, badFile };  // Skip game if desired player not found
             }
 
             gameData.p1Code = metadata.players[0].names.code;
@@ -166,7 +170,7 @@ const parserController = (db) => {
             let settings = game.getSettings();
             if (!(settings.stageId in stages)) {
                 badFile = { file: path.replace(/^.*[\\\/]/, ''), reason: 'Illegal stage.' };
-                return {success, badFile};  // Skip game if non legal stage
+                return { success, badFile };  // Skip game if non legal stage
             }
             gameData.stage = settings.stageId;
             gameData.p1Character = settings.players[0].characterId;
@@ -185,7 +189,7 @@ const parserController = (db) => {
             if (gameEnd.gameEndMethod == 7) { // L+R+A+Start
                 if (metadata.lastFrame / 60 > 30) {  // Checks if game was over 30 seconds long
                     badFile = { file: path.replace(/^.*[\\\/]/, ''), reason: 'Game too short.' };
-                    return {success, badFile};  // Skip game if too short and L+R+A+Start
+                    return { success, badFile };  // Skip game if too short and L+R+A+Start
                 }
                 else {
                     gameData.lraStart = true;
@@ -222,7 +226,7 @@ const parserController = (db) => {
             }
             else {  // Unknown game end type
                 badFiles = { file: path.replace(/^.*[\\\/]/, ''), reason: 'Unknown game ending.' };
-                return {success, badFile};  // Skip game if unknown game ending
+                return { success, badFile };  // Skip game if unknown game ending
             }
 
 
@@ -276,7 +280,7 @@ const parserController = (db) => {
             badFiles = { file: path.replace(/^.*[\\\/]/, ''), reason: 'Error parsing game data.' };
         }
 
-        return {success, badFile};
+        return { success, badFile };
 
     }
 
