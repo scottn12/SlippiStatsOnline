@@ -16,7 +16,7 @@ const routes = (db) => {
     router.post('/save', upload.array('files'), parser.parse);
 
     const statsController = require('./controllers/stats-controller')(db);
-    router.get('/:code', statsController.getStats);
+    router.get('/stats/:code', statsController.getStats);
 
     return {
         router
