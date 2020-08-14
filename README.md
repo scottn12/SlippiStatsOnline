@@ -1,9 +1,20 @@
-TODO
+# Scott Stats
 
-1. slippi green favicon
+This website is designed to provide a way to analyze a large number of [Slippi Online](https://slippi.gg/) games at once.
 
-2. more tooltips
+In addition to providing a clean interface to view and compare stats, this application can also filter the dataset using parameters such as opponent, characters played, stages played on, and more.
 
-3. is character filter working (db filter)?
+## Front End
+The front end was developed in Javascript, HTML, and CSS using the Vue.js framework along side the Vuetify component library.
+To run locally:
+1. `npm install`
+2. `npm run serve`
 
-4. make search query affect frontend url and pull from there too
+## Back End
+The back end was developed in node.js using the Express.
+To run locally:
+1. `npm install`
+2. `npm start`
+
+## Deployment
+This application is deployed on a VPS (Virtual Private Server) running Ubuntu using NGINX and Apache.
