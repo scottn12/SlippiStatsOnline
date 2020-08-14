@@ -593,7 +593,7 @@ export default {
           if (this.stats.numGames > 0) {
             this.panelOpening = false;
             this.panel = undefined;
-            this.$router.replace({ path: '/slippi/stats/' + code, query: data}).catch(()=>{});
+            this.$router.replace({ path: '/stats/' + code, query: data}).catch(()=>{});
           }
         })
         .catch((err) => {
@@ -656,7 +656,7 @@ export default {
       }
     },
     share() {
-      let url = window.location.origin + "/" + this.$route.fullPath;
+      let url = window.location.origin + this.$route.fullPath;
       const el = document.createElement('textarea');
       el.value = url;
       document.body.appendChild(el);

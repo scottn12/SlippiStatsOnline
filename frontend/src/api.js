@@ -1,11 +1,13 @@
 import axios from 'axios';
 
+const baseURL = 'http://localhost:3000/slippi/'
+
 export default {
   save: (data, onUploadProgress) => {
     return axios({
       method: 'POST',
-      url: 'http://localhost:3000/slippi/save',
-      headers: { 
+      url: baseURL + 'save',
+      headers: {
         'Access-Control-Allow-Origin': '*'
       },
       data,
@@ -15,8 +17,8 @@ export default {
   getStats: (code, params) => {
     return axios({
       method: 'GET',
-      url: 'http://localhost:3000/slippi/' + code,
-      headers: { 
+      url: baseURL + 'stats/' + code,
+      headers: {
         'Access-Control-Allow-Origin': '*'
       },
       params

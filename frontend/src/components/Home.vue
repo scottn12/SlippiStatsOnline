@@ -5,21 +5,21 @@
         <v-card class="mx-auto justify-center">
           <v-card-title class="header">About</v-card-title>
           <v-card-text>
-            <p>This website is designed to provide way to analyze a large number of <a href="https://slippi.gg/" target="_blank">Slippi Online</a> games at once.</p>
-            <p>In addition to providing a clean interface to view and compare stats, this application can also filter the dataset using paramaters such as opponent, characters played, stages played on, and more.</p>
+            <p>This website is designed to provide a way to analyze a large number of <a href="https://slippi.gg/" target="_blank">Slippi Online</a> games at once.</p>
+            <p>In addition to providing a clean interface to view and compare stats, this application can also filter the dataset using parameters such as opponent, characters played, stages played on, and more.</p>
           </v-card-text>
           <v-card-title class="header">How To Use</v-card-title>
           <v-card-text>
             <ol>
-              <li>Locate your Slippi Online replay files. By default these are stored in the <code style="background-color: lightgray; color: black;">C:\Users\scott\Documents\Slippi</code> directory.</li>
-              <li>It is reccomended you "zip" your files, since this will compress them and shorten the upload time greatly. To do so right click the folder which contains the files and under the "Send to" option click Compressed (zipped) folder as show below.
+              <li>Locate your Slippi Online replay files. By default these are stored in the <code style="background-color: lightgray; color: black;">C:\Users\[username]\Documents\Slippi</code> directory.</li>
+              <li>It is recommended you "zip" your files, since this will compress them and shorten the upload time greatly. To do so, right click the folder which contains the files and under the "Send to" option, click Compressed (zipped) folder as shown below.
                 <v-img class="img" :src="require('../assets/send_to_zip.png')"></v-img>
               </li>
               <li>Click on the "File Input" button under Upload Slippi Games on the right. Select one or more .zip or .slp files and click on the upload button.</li>
-              <li>At this point your files will begin to upload, please remain on the page until the upload is complete.</li>
-              <li>After the upload completes additonal proccessing will take place to gather the stats from each game. This may take several minutes depending on the number of files uplaoded. It is still reccomended (although not necessary) to remain on this page to see the results of the upload in case there were any files which could not be parsed.</li>
+              <li>At this point, your files will begin to upload. Please remain on the page until the upload is complete.</li>
+              <li>After the upload completes, additional proccessing will take place to gather the stats from each game. This may take several minutes depending on the number of files uploaded. It is still reccomended (although not necessary) to remain on this page to see the results of the upload in case there were any files which could not be parsed.</li>
               <li>Once all processing is complete, you can now view your stats. Click on the "View Stats" button in the top right of this page to be navigated to the stats page.</li>
-              <li>On the stats page, you must enter at least your own connect code. This is the code you give to others when using direct play on Slippi Online. Additonally, many other options are avaiable to filter with. </li>
+              <li>On the stats page, you must enter at least your own connect code. This is the code you give to others when using direct play on Slippi Online. Additonally, many other options are available to filter with. </li>
             </ol>
           </v-card-text>
         </v-card>
@@ -92,7 +92,7 @@
           <v-card-title class="justify-center">Upload Results</v-card-title>
           <div v-if="results == 'error'" style="margin-left: 15%; margin-right: 15%; padding-bottom: 10px;">
             <v-alert  type="error" class="text-center" color="#e33a0b">
-              Unkonwn error occured. Please try again later.
+              Unknown error occurred. Please try again later.
             </v-alert>
           </div>
           <div v-if="results != 'error'" style="margin-left: 5%; margin-right: 5%; padding-bottom: 15px;">
@@ -178,6 +178,11 @@ export default {
           this.waiting = false;
           this.results = response.data;
           this.results.badFiles.forEach((file) => {
+            console.log(file);
+            if (!file) {
+              file.reason = 'Unknown';
+              file.file = 'Unknown';
+            }
             if (file.reason in this.badFiles) {
               this.badFiles[file.reason].push(file.file);
             }
@@ -189,16 +194,16 @@ export default {
         .catch((err) => {
           console.log(err);
           this.results = 'error';
+          this.progress = undefined;
+          this.waiting = false;
         });
     },
     onProgressUpdate(update) {
       let progress = Math.round((update.loaded / update.total) * 100);
       this.progress = progress;
       if (progress == 100) {
-        setTimeout(() => {
-          this.progress = undefined;
-          this.waiting = true;
-        }, 1000);
+        this.progress = undefined;
+        this.waiting = true;
       }
     },
   },

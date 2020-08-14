@@ -66,7 +66,7 @@
           </v-col>
         </v-row>
         <br />
-        <v-card-title class="justify-center sectionTitle">Efficency</v-card-title>
+        <v-card-title class="justify-center sectionTitle">Efficiency</v-card-title>
         <v-row no-gutters justify="space-around">
           <v-col cols="3">
             <div class="chartTitle">
@@ -167,7 +167,7 @@
           </v-col>
         </v-row>
         <br>
-        <v-card-title class="justify-center sectionTitle">Miscilleanous</v-card-title>
+        <v-card-title class="justify-center sectionTitle">Miscellaneous</v-card-title>
         <v-row no-gutters justify="space-around" align="center">
           <v-col cols="3">
             <v-row no-gutters justify="center">
