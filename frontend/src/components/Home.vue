@@ -167,7 +167,6 @@ export default {
       });
     },
     send() {
-      console.log('here');
       this.progress = 0;
       this.results = undefined;
       this.badFiles = {};
