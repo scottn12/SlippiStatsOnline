@@ -50,6 +50,8 @@ const parserController = (db) => {
 
         // Allow last file to register (meh)
         setTimeout(() => {
+            console.log('success:', success);
+            console.log('badFiles:', badFiles.length);
             res.send({ success, badFiles });
         }, 2000);
 
@@ -276,8 +278,7 @@ const parserController = (db) => {
             }
         }
         catch (e) {
-            console.log(`Unable to parse ${path}:\n${e}`);
-            badFiles = { file: path.replace(/^.*[\\\/]/, ''), reason: 'Error parsing game data.' };
+            badFile = { file: path.replace(/^.*[\\\/]/, ''), reason: 'Error parsing game data.' };
         }
 
         return { success, badFile };
