@@ -5,7 +5,6 @@ const routes = require('./routes')(db).router;
 const fs = require('fs');
 const path = require('path');
 const logs = require('./config/logger');
-var https = require('https');
 
 const app = express();
 const port = 3000;
@@ -30,13 +29,3 @@ fs.readdir('tmp', (err, files) => {
         });
     }
 });
-
-var options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/example.com/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/example.com/cert.pem'),
-    ca: fs.readFileSync('/etc/letsencrypt/live/example.com/chain.pem')
-};
-
-https.createServer(options, function (req, res) {
-
-}).listen(3000);
