@@ -5,6 +5,7 @@
         :style="panelOpening ? 'transition: width .3s; width: 100%;' : 'transition: width .3s; width: 50%; transition-delay: .3s;'"
         justify="center"
       >
+
         <v-expansion-panels v-model="panel" popout hover>
           <v-expansion-panel @click="panelClick()">
             <v-expansion-panel-header>
@@ -251,6 +252,19 @@
               </v-form>
             </v-expansion-panel-content>
           </v-expansion-panel>
+          <v-fade-transition>
+            <v-overlay
+              v-if="waiting"
+              absolute
+              class="justify-center"
+              color="#DCDCDC"
+              :opacity=".8"
+            >
+              <v-row no-gutters justify="center">
+                <v-progress-circular :size="70" :width="7" color="primary" indeterminate></v-progress-circular>
+              </v-row>
+            </v-overlay>
+          </v-fade-transition>
         </v-expansion-panels>
       </div>
     </v-row>
@@ -395,6 +409,7 @@ export default {
     dates: [],
     showShareToolTip: false,
     error: false,
+    waiting: false,
     allowedDates: (val) =>
       new Date(new Date(val).toLocaleDateString()) <
       new Date(new Date().toLocaleDateString()),
@@ -525,6 +540,7 @@ export default {
   },
   methods: {
     getStats() {
+      this.waiting = true;
       this.error = false;
       let data = {};
       let code = this.code.replace("#", ""); // Remove # for api request
@@ -595,10 +611,12 @@ export default {
             this.panel = undefined;
             this.$router.replace({ path: '/stats/' + code, query: data}).catch(()=>{});
           }
+          this.waiting = false;
         })
         .catch((err) => {
-          this.error = true;
           console.log(err);
+          this.error = true;
+          this.waiting = false;
         });
     },
     reset() {
