@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-app-bar app color="primary" dark style="z-index: 9999;">
-      <v-toolbar-title @click="$router.push({ path: '/' })">Slippi Stats</v-toolbar-title>
+      <v-toolbar-title style="cursor: pointer;" @click="$router.push({ path: '/' })">Slippi Stats</v-toolbar-title>
       <v-spacer></v-spacer>
 
       <v-btn light class="ma-2" @click="$router.push({ path: '/' })">
