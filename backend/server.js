@@ -5,6 +5,7 @@ const routes = require('./routes')(db).router;
 const fs = require('fs');
 const path = require('path');
 const logs = require('./config/logger');
+var https = require('https');
 
 const app = express();
 const port = 3000;
@@ -13,11 +14,6 @@ app.use(cors());
 app.use(logs.logger);
 app.use('/slippi', routes);
 app.use(logs.errorLogger);
-
-var server = app.listen(port, () => {
-    console.log(`Server listening at http://localhost:${port}`)
-});
-server.timeout = 1000 * 60 * 30;
 
 // Cleanup tmp directory
 fs.readdir('tmp', (err, files) => {
@@ -29,3 +25,10 @@ fs.readdir('tmp', (err, files) => {
         });
     }
 });
+
+// Start HTTPS Server
+const privateKey  = fs.readFileSync('ssl/server.key', 'utf8');
+const certificate = fs.readFileSync('ssl/server.crt', 'utf8');
+const server = https.createServer(credentials, app);
+server.listen(3000);
+server.timeout = 1000 * 60 * 30;
