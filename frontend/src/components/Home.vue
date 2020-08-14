@@ -54,21 +54,24 @@
                   style="margin-bottom: 10px;"
                 >Upload</v-btn>
               </v-card-actions>
-              <v-row
-                no-gutters
-                justify="center"
-                v-if="progress"
-                style="padding-bottom: 15px; padding-top: 5px;"
-              >
-                <v-progress-linear
-                  rounded
-                  height="20"
-                  style="width: 70%; margin-right: 5px;"
-                  v-model="progress"
-                ></v-progress-linear>
-                <span :style="progress != 100 ? '' : 'color:#44A963;'">{{ progress }}%</span>
-              </v-row>
-
+              <div v-if="progress != undefined">
+                <v-row
+                  no-gutters
+                  justify="center"
+                  style="padding-bottom: 5px; padding-top: 5px;"
+                >
+                  <v-progress-linear
+                    rounded
+                    height="20"
+                    style="width: 70%; margin-right: 5px;"
+                    v-model="progress"
+                  ></v-progress-linear>
+                  <span :style="progress != 100 ? '' : 'color:#44A963;'">{{ progress }}%</span>
+                </v-row>
+                <v-row no-gutters justify="center" style="color:#44A963; padding-bottom: 15px;">
+                  Please do not leave this page until the upload has completed!
+                </v-row>
+              </div>
               <v-fade-transition>
                 <v-overlay
                   v-if="waiting"
@@ -164,6 +167,7 @@ export default {
       });
     },
     send() {
+      console.log('here');
       this.progress = 0;
       this.results = undefined;
       this.badFiles = {};
