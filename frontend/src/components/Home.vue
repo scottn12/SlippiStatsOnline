@@ -68,7 +68,7 @@
                   ></v-progress-linear>
                   <span :style="progress != 100 ? '' : 'color:#44A963;'">{{ progress }}%</span>
                 </v-row>
-                <v-row no-gutters justify="center" style="color:#44A963; padding-bottom: 15px;">
+                <v-row no-gutters justify="center" style="color:#44A963; padding-botstom: 15px;">
                   Please do not leave this page until the upload has completed!
                 </v-row>
               </div>
