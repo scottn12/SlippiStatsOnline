@@ -21,11 +21,10 @@ const statsController = (db) => {
         // Get player codes
         var code;
         if (req.params.code) {
-            let codeFirstDigit = req.params.code.indexOf(req.params.code.match(/\d/));
-            if (codeFirstDigit == -1) {
+            code = req.params.code.replace('-', '#');
+            if (!code.match('^[a-zA-Z\d]{1,6}#\d{1,6}$')) {
                 return res.status(400).send({ message: 'Invalid player code provided.' });
             }
-            code = req.params.code.substring(0, codeFirstDigit).toLocaleUpperCase() + '#' + req.params.code.substring(codeFirstDigit);
             data.$or.push({ p1Code: code }, { p2Code: code });
         }
         else {
@@ -35,11 +34,11 @@ const statsController = (db) => {
         var opponentCode;
         if (req.query.opponentCode) {
             if (!data.$and) data.$and = [];
+            let opponentCode = req.params.code.replace('-', '#');
             let opponentCodeFirstDigit = req.query.opponentCode.indexOf(req.query.opponentCode.match(/\d/));
-            if (opponentCodeFirstDigit == -1) {
-                return res.status(400).send({ message: 'Invalid opponent player code provided.' });
+            if (!opponentCodeFirstDigit.match('^[a-zA-Z\d]{1,6}#\d{1,6}$')) {
+                return res.status(400).send({ message: 'Invalid player code provided.' });
             }
-            opponentCode = req.query.opponentCode.substring(0, opponentCodeFirstDigit).toLocaleUpperCase() + '#' + req.query.opponentCode.substring(opponentCodeFirstDigit);
             data.$and.push({ $or: [{ p1Code: opponentCode }, { p2Code: opponentCode }] });
         }
 
