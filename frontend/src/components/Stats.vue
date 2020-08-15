@@ -110,6 +110,7 @@
                         <v-checkbox
                           v-model="excludeLRAStart"
                           label="Exclude all games ending with L+R+A+Start"
+                          style="max-width: 80%;"
                         ></v-checkbox>
                         <v-tooltip bottom>
                           <template v-slot:activator="{on, attrs}">
