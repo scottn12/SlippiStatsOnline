@@ -36,5 +36,11 @@ const credentials = {
     cert: certificate
 };
 const server = https.createServer(credentials, app);
-server.listen(3000);
+server.listen(port);
 server.timeout = 1000 * 60 * 30;
+
+// Start HTTP Server
+// const server = app.listen(port, () => {
+//     console.log(`Server listening at http://localhost:${port}`)
+// });
+// server.timeout = 1000 * 60 * 30;

@@ -11,10 +11,11 @@ To run locally:
 2. `npm run serve`
 
 ## Back End
-The back end was developed in node.js using the Express.
+The back end was developed in node.js using the Express framework and MongoDB database.
 To run locally:
-1. `npm install`
-2. `npm start`
+1. Comment out the lines in `server.js` that start the HTTPS server. Uncomment the lines that start the HTTP server.
+2. `npm install`
+3. `npm start`
 
 ## Deployment
 This application is deployed on a VPS (Virtual Private Server) running Ubuntu using NGINX and Apache.
