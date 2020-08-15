@@ -368,7 +368,7 @@
               - {{ stats.numGames - stats.player.overall.wins }}<span style="color: #e33a0b">L</span>
             </div>
         </v-row>
-        <v-row no-gutters justify="space-around" style="margin-top: 25px;">
+        <v-row no-gutters justify="center" style="margin-top: 25px;">
           <div class="chartTitle">Neutral Win Rate</div>
           <v-row no-gutters justify="center">
             <DoughnutChart
@@ -379,14 +379,6 @@
               :colors="['#e33a0b', '#44A963']"
               :percentage="stats.player.average.neutralWinRatio * 100"
             />
-            <div class="doughnutFooter" style="opacity: 0;">
-              {{ stats.player.overall.wins }}
-              <span style="color: #44A963">W</span>
-              - {{ stats.numGames - stats.player.overall.wins }}
-              <span
-                style="color: #e33a0b"
-              >L</span>
-            </div>
           </v-row>
         </v-row>
         <v-card-title class="justify-center sectionTitle">Efficiency</v-card-title>
