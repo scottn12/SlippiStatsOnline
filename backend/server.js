@@ -29,6 +29,10 @@ fs.readdir('tmp', (err, files) => {
 // Start HTTPS Server
 const privateKey  = fs.readFileSync('ssl/server.key', 'utf8');
 const certificate = fs.readFileSync('ssl/server.crt', 'utf8');
+const credentials = {
+    key: privateKey,
+    cert: certificate
+};
 const server = https.createServer(credentials, app);
 server.listen(3000);
 server.timeout = 1000 * 60 * 30;
