@@ -1,155 +1,44 @@
 <template>
   <v-container>
-    <v-row justify="center" no-gutters>
-      <div
-        :style="panelOpening ? 'transition: width .3s; width: 100%;' : 'transition: width .3s; width: 50%; transition-delay: .3s;'"
-        justify="center"
-      >
+    <!-- Desktop -->
+    <div v-if="!$vuetify.breakpoint.xsOnly">
+      <v-row justify="center" no-gutters>
+        <div
+          :style="panelOpening ? 'transition: width .3s; width: 100%;' : 'transition: width .3s; width: 50%; transition-delay: .3s;'"
+          justify="center"
+        >
 
-        <v-expansion-panels v-model="panel" popout hover>
-          <v-expansion-panel @click="panelClick()">
-            <v-expansion-panel-header>
-              <template v-slot:default>
-                <v-row no-gutters justify="center" class="title font-weight-regular">Search</v-row>
-              </template>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <v-form ref="form" v-model="valid">
-                <v-row dense justify="space-around">
-                  <v-col cols="4">
-                    <v-row no-gutters justify="center">
-                      <v-text-field
-                        dense
-                        outlined
-                        v-model="code"
-                        :rules="codeRules"
-                        label="Your Connect Code"
-                        required
-                      ></v-text-field>
-                    </v-row>
-                    <v-row no-gutters justify="center">
-                      <v-autocomplete
-                        multiple
-                        outlined
-                        v-model="characters"
-                        :items="characterList"
-                        label="Your Characters"
-                      >
-                        <template v-slot:selection="selection">
-                          <v-chip v-bind="selection.attrs" @click="removeCharacter(selection.item)">
-                            <span
-                              v-if="selection.item == 'Sheik / Zelda'"
-                              style="display: inherit;"
-                            >
-                              <v-img
-                                :src="require(`../assets/stock_icons/Sheik.png`)"
-                                :alt="selection.item"
-                                max-width="20"
-                                style="margin-right: 5px;"
-                              ></v-img>
-                              <v-img
-                                :src="require(`../assets/stock_icons/Zelda.png`)"
-                                :alt="selection.item"
-                                max-width="20"
-                                :style="characters.length > 1 ? '' : 'margin-right: 5px;'"
-                              ></v-img>
-                            </span>
-                            <v-img
-                              v-if="selection.item != 'Sheik / Zelda'"
-                              :src="require(`../assets/stock_icons/${selection.item}.png`)"
-                              :alt="selection.item"
-                              max-width="20"
-                              :style="characters.length > 1 ? '' : 'margin-right: 5px;'"
-                            ></v-img>
-                            <span v-if="characters.length < 2">{{ selection.item }}</span>
-                          </v-chip>
-                        </template>
-                        <template v-slot:item="character">
-                          <span v-if="character.item == 'Sheik / Zelda'" style="display: inherit;">
-                            <v-img
-                              :src="require(`../assets/stock_icons/Sheik.png`)"
-                              :alt="character.item"
-                              max-width="20"
-                              style="margin-right: 5px;"
-                            ></v-img>
-                            <v-img
-                              :src="require(`../assets/stock_icons/Zelda.png`)"
-                              :alt="character.item"
-                              max-width="20"
-                              style="margin-right: 5px;"
-                            ></v-img>
-                          </span>
-                          <v-img
-                            v-if="character.item != 'Sheik / Zelda'"
-                            :src="require(`../assets/stock_icons/${character.item}.png`)"
-                            :alt="character.item"
-                            max-width="20"
-                            style="margin-right: 5px;"
-                          ></v-img>
-                          {{ character.item }}
-                        </template>
-                      </v-autocomplete>
-                    </v-row>
-                    <v-row no-gutters justify="center">
-                      <v-autocomplete
-                        multiple
-                        outlined
-                        v-model="stages"
-                        :items="stageList"
-                        label="Stages"
-                      >
-                        <template v-slot:selection="{item, attrs}">
-                          <v-chip v-bind="attrs" @click="removeStage(item)">{{ item }}</v-chip>
-                        </template>
-                        <template v-slot:item="selection">{{ selection.item }}</template>
-                      </v-autocomplete>
-                    </v-row>
-                    <v-row no-gutters justify="center">
-                      <v-checkbox
-                        v-model="excludeLRAStart"
-                        label="Exclude all games ending with L+R+A+Start"
-                      ></v-checkbox>
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{on, attrs}">
-                          <v-icon
-                            v-bind="attrs"
-                            v-on="on"
-                            style="margin-bottom: 2px; margin-left: 5px;"
-                          >mdi-information</v-icon>
-                        </template>
-                        <span>
-                          Note: All games quit out within 30 seconds are starting are automatically excluded.
-                          <br />This option will exclude
-                          <strong>ALL</strong> games quit out before ending regardless of length.
-                        </span>
-                      </v-tooltip>
-                    </v-row>
-                  </v-col>
-
-                  <v-col cols="4">
-                    <v-row no-gutters justify="center">
-                      <v-text-field
-                        dense
-                        outlined
-                        v-model="opponentCode"
-                        :rules="opponentCodeRules"
-                        label="Opponent's Connect Code"
-                      ></v-text-field>
-                    </v-row>
-                    <v-row no-gutters justify="center">
+          <v-expansion-panels v-model="panel" popout hover>
+            <v-expansion-panel @click="panelClick()">
+              <v-expansion-panel-header>
+                <template v-slot:default>
+                  <v-row no-gutters justify="center" class="title font-weight-regular">Search</v-row>
+                </template>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-form ref="form" v-model="valid">
+                  <v-row dense justify="space-around">
+                    <v-col cols="4">
+                      <v-row no-gutters justify="center">
+                        <v-text-field
+                          dense
+                          outlined
+                          v-model="code"
+                          :rules="codeRules"
+                          label="Your Connect Code"
+                          required
+                        ></v-text-field>
+                      </v-row>
                       <v-row no-gutters justify="center">
                         <v-autocomplete
                           multiple
                           outlined
-                          v-model="opponentCharacters"
+                          v-model="characters"
                           :items="characterList"
-                          label="Opponent's Characters"
+                          label="Your Characters"
                         >
                           <template v-slot:selection="selection">
-                            <v-chip
-                              v-bind="selection.attrs"
-                              @click="removeOpponentCharacter(selection.item)"
-                            >
+                            <v-chip v-bind="selection.attrs" @click="removeCharacter(selection.item)">
                               <span
                                 v-if="selection.item == 'Sheik / Zelda'"
                                 style="display: inherit;"
@@ -164,7 +53,7 @@
                                   :src="require(`../assets/stock_icons/Zelda.png`)"
                                   :alt="selection.item"
                                   max-width="20"
-                                  :style="opponentCharacters.length > 1 ? '' : 'margin-right: 5'"
+                                  :style="characters.length > 1 ? '' : 'margin-right: 5px;'"
                                 ></v-img>
                               </span>
                               <v-img
@@ -172,16 +61,13 @@
                                 :src="require(`../assets/stock_icons/${selection.item}.png`)"
                                 :alt="selection.item"
                                 max-width="20"
-                                :style="opponentCharacters.length > 1 ? '' : 'margin-right: 5px;'"
+                                :style="characters.length > 1 ? '' : 'margin-right: 5px;'"
                               ></v-img>
-                              <span v-if="opponentCharacters.length < 2">{{ selection.item }}</span>
+                              <span v-if="characters.length < 2">{{ selection.item }}</span>
                             </v-chip>
                           </template>
                           <template v-slot:item="character">
-                            <span
-                              v-if="character.item == 'Sheik / Zelda'"
-                              style="display: inherit;"
-                            >
+                            <span v-if="character.item == 'Sheik / Zelda'" style="display: inherit;">
                               <v-img
                                 :src="require(`../assets/stock_icons/Sheik.png`)"
                                 :alt="character.item"
@@ -206,110 +92,523 @@
                           </template>
                         </v-autocomplete>
                       </v-row>
-                    </v-row>
-                    <v-row no-gutters justify="center">
-                      <v-col>
+                      <v-row no-gutters justify="center">
+                        <v-autocomplete
+                          multiple
+                          outlined
+                          v-model="stages"
+                          :items="stageList"
+                          label="Stages"
+                        >
+                          <template v-slot:selection="{item, attrs}">
+                            <v-chip v-bind="attrs" @click="removeStage(item)">{{ item }}</v-chip>
+                          </template>
+                          <template v-slot:item="selection">{{ selection.item }}</template>
+                        </v-autocomplete>
+                      </v-row>
+                      <v-row no-gutters justify="center">
+                        <v-checkbox
+                          v-model="excludeLRAStart"
+                          label="Exclude all games ending with L+R+A+Start"
+                        ></v-checkbox>
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{on, attrs}">
+                            <v-icon
+                              v-bind="attrs"
+                              v-on="on"
+                              style="margin-bottom: 2px; margin-left: 5px;"
+                            >mdi-information</v-icon>
+                          </template>
+                          <span>
+                            Note: All games quit out within 30 seconds are starting are automatically excluded.
+                            <br />This option will exclude
+                            <strong>ALL</strong> games quit out before ending regardless of length.
+                          </span>
+                        </v-tooltip>
+                      </v-row>
+                    </v-col>
+
+                    <v-col cols="4">
+                      <v-row no-gutters justify="center">
+                        <v-text-field
+                          dense
+                          outlined
+                          v-model="opponentCode"
+                          :rules="opponentCodeRules"
+                          label="Opponent's Connect Code"
+                        ></v-text-field>
+                      </v-row>
+                      <v-row no-gutters justify="center">
                         <v-row no-gutters justify="center">
-                          <v-checkbox
-                            style="margin: 0;"
-                            v-model="searchAllTime"
-                            label="Search games from all time"
-                          ></v-checkbox>
-                          <v-tooltip bottom>
-                            <template v-slot:activator="{on, attrs}">
-                              <v-icon
-                                v-bind="attrs"
-                                v-on="on"
-                                style="margin-bottom: 18px; margin-left: 5px;"
-                              >mdi-information</v-icon>
-                            </template>
-                            <span>
-                              Leave checked to serach games matching the criteria regardless of date.
-                              <br />Uncheck to pick a date range. Selecting one date will search from that date to present, two dates will search between those dates.
-                            </span>
-                          </v-tooltip>
-                        </v-row>
-                        <v-row v-if="!searchAllTime" no-gutters justify="center">
-                          <v-date-picker
-                            @click:date="onDateChange"
-                            :show-current="false"
-                            :allowed-dates="allowedDates"
-                            v-model="dates"
+                          <v-autocomplete
                             multiple
-                            color="primary"
-                            no-title
-                            elevation="3"
-                          ></v-date-picker>
+                            outlined
+                            v-model="opponentCharacters"
+                            :items="characterList"
+                            label="Opponent's Characters"
+                          >
+                            <template v-slot:selection="selection">
+                              <v-chip
+                                v-bind="selection.attrs"
+                                @click="removeOpponentCharacter(selection.item)"
+                              >
+                                <span
+                                  v-if="selection.item == 'Sheik / Zelda'"
+                                  style="display: inherit;"
+                                >
+                                  <v-img
+                                    :src="require(`../assets/stock_icons/Sheik.png`)"
+                                    :alt="selection.item"
+                                    max-width="20"
+                                    style="margin-right: 5px;"
+                                  ></v-img>
+                                  <v-img
+                                    :src="require(`../assets/stock_icons/Zelda.png`)"
+                                    :alt="selection.item"
+                                    max-width="20"
+                                    :style="opponentCharacters.length > 1 ? '' : 'margin-right: 5'"
+                                  ></v-img>
+                                </span>
+                                <v-img
+                                  v-if="selection.item != 'Sheik / Zelda'"
+                                  :src="require(`../assets/stock_icons/${selection.item}.png`)"
+                                  :alt="selection.item"
+                                  max-width="20"
+                                  :style="opponentCharacters.length > 1 ? '' : 'margin-right: 5px;'"
+                                ></v-img>
+                                <span v-if="opponentCharacters.length < 2">{{ selection.item }}</span>
+                              </v-chip>
+                            </template>
+                            <template v-slot:item="character">
+                              <span
+                                v-if="character.item == 'Sheik / Zelda'"
+                                style="display: inherit;"
+                              >
+                                <v-img
+                                  :src="require(`../assets/stock_icons/Sheik.png`)"
+                                  :alt="character.item"
+                                  max-width="20"
+                                  style="margin-right: 5px;"
+                                ></v-img>
+                                <v-img
+                                  :src="require(`../assets/stock_icons/Zelda.png`)"
+                                  :alt="character.item"
+                                  max-width="20"
+                                  style="margin-right: 5px;"
+                                ></v-img>
+                              </span>
+                              <v-img
+                                v-if="character.item != 'Sheik / Zelda'"
+                                :src="require(`../assets/stock_icons/${character.item}.png`)"
+                                :alt="character.item"
+                                max-width="20"
+                                style="margin-right: 5px;"
+                              ></v-img>
+                              {{ character.item }}
+                            </template>
+                          </v-autocomplete>
                         </v-row>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                </v-row>
+                      </v-row>
+                      <v-row no-gutters justify="center">
+                        <v-col>
+                          <v-row no-gutters justify="center">
+                            <v-checkbox
+                              style="margin: 0;"
+                              v-model="searchAllTime"
+                              label="Search games from all time"
+                            ></v-checkbox>
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{on, attrs}">
+                                <v-icon
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  style="margin-bottom: 18px; margin-left: 5px;"
+                                >mdi-information</v-icon>
+                              </template>
+                              <span>
+                                Leave checked to serach games matching the criteria regardless of date.
+                                <br />Uncheck to pick a date range. Selecting one date will search from that date to present, two dates will search between those dates.
+                              </span>
+                            </v-tooltip>
+                          </v-row>
+                          <v-row v-if="!searchAllTime" no-gutters justify="center">
+                            <v-date-picker
+                              @click:date="onDateChange"
+                              :show-current="false"
+                              :allowed-dates="allowedDates"
+                              v-model="dates"
+                              multiple
+                              color="primary"
+                              no-title
+                              elevation="3"
+                            ></v-date-picker>
+                          </v-row>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                  <v-row no-gutters justify="center">
+                    <v-btn style="margin-right: 15px;" color="normal" @click="reset()">Reset</v-btn>
+                    <v-btn :disabled="!valid" color="success" @click="getStats()">Search</v-btn>
+                  </v-row>
+                </v-form>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+            <v-fade-transition>
+              <v-overlay
+                v-if="waiting"
+                absolute
+                class="justify-center"
+                color="#DCDCDC"
+                :opacity=".8"
+              >
                 <v-row no-gutters justify="center">
-                  <v-btn style="margin-right: 15px;" color="normal" @click="reset()">Reset</v-btn>
-                  <v-btn :disabled="!valid" color="success" @click="getStats()">Search</v-btn>
+                  <v-progress-circular :size="70" :width="7" color="primary" indeterminate></v-progress-circular>
                 </v-row>
-              </v-form>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-          <v-fade-transition>
-            <v-overlay
-              v-if="waiting"
-              absolute
-              class="justify-center"
-              color="#DCDCDC"
-              :opacity=".8"
-            >
-              <v-row no-gutters justify="center">
-                <v-progress-circular :size="70" :width="7" color="primary" indeterminate></v-progress-circular>
-              </v-row>
-            </v-overlay>
-          </v-fade-transition>
-        </v-expansion-panels>
-      </div>
-    </v-row>
-    <br />
-    <v-row v-if="stats && stats.numGames == 0" justify="center" no-gutters>
-      <v-col cols="5">
-        <v-alert type="error" class="text-center" color="#e33a0b">
-          No games found with search criteria.
-          <router-link style="color: white;" to="/">Click here</router-link> to upload more slippi files.
-        </v-alert>
-      </v-col>
-    </v-row>
-    <v-row v-if="error" justify="center" no-gutters>
-      <v-col cols="5">
-        <v-alert type="error" class="text-center" color="#e33a0b">
-          Unknown error occured. Please try again later.
-        </v-alert>
-      </v-col>
-    </v-row>
-    <div v-if="stats && stats.numGames > 0">
-      <v-row no-gutters justify="center">
-        <v-col cols="3" justify="center">
-          <v-alert type="success" class="text-center" color="#44A963">
-            {{ stats.numGames}} games found<span v-if="stats.timeouts > 0">({{ stats.timeouts }} timeout<span v-if="stats.timeouts > 1">s</span>)</span>!
+              </v-overlay>
+            </v-fade-transition>
+          </v-expansion-panels>
+        </div>
+      </v-row>
+      <br />
+      <v-row v-if="stats && stats.numGames == 0" justify="center" no-gutters>
+        <v-col cols="5">
+          <v-alert type="error" class="text-center" color="#e33a0b">
+            No games found with search criteria.
+            <router-link style="color: white;" to="/">Click here</router-link> to upload more slippi files.
           </v-alert>
         </v-col>
       </v-row>
-      <v-row no-gutters justify="center">
-        <v-tooltip right v-model="showShareToolTip">
-          <template v-slot:activator="{}">
-            <v-btn outlined color="#44A963" @click="share()">Share</v-btn>
-          </template>
-          <span>
-            URL copied to clipboard!
-          </span>
-        </v-tooltip>
+      <v-row v-if="error" justify="center" no-gutters>
+        <v-col cols="5">
+          <v-alert type="error" class="text-center" color="#e33a0b">
+            Unknown error occured. Please try again later.
+          </v-alert>
+        </v-col>
+      </v-row>
+      <div v-if="stats && stats.numGames > 0">
+        <v-row no-gutters justify="center">
+          <v-col cols="3" justify="center">
+            <v-alert type="success" class="text-center" color="#44A963">
+              {{ stats.numGames}} games found<span v-if="stats.timeouts > 0">({{ stats.timeouts }} timeout<span v-if="stats.timeouts > 1">s</span>)</span>!
+            </v-alert>
+          </v-col>
+        </v-row>
+        <v-row no-gutters justify="center">
+          <v-tooltip right v-model="showShareToolTip">
+            <template v-slot:activator="{}">
+              <v-btn outlined color="#44A963" @click="share()">Share</v-btn>
+            </template>
+            <span>
+              URL copied to clipboard!
+            </span>
+          </v-tooltip>
 
+        </v-row>
+        <v-row no-gutters justify="space-around">
+          <StatsCard
+            :stats="stats"
+            :playerTag="stats.player.playerData.tag ? stats.player.playerData.tag : stats.player.playerData.code"
+            :opponentTag="stats && submittedOpponentCode ? (stats.opponent.playerData[submittedOpponentCode] ? stats.opponent.playerData[submittedOpponentCode] : submittedOpponentCode) : 'Opponent'"
+          />
+        </v-row>
+      </div>
+    </div>
+
+    <!-- Mobile -->
+    <div v-if="$vuetify.breakpoint.xsOnly">
+      <v-row justify="center" no-gutters>
+        <div
+          :style="panelOpening ? 'transition: width .3s; width: 100%;' : 'transition: width .3s; width: 50%; transition-delay: .3s;'"
+          justify="center"
+        >
+
+          <v-expansion-panels v-model="panel" popout hover>
+            <v-expansion-panel @click="panelClick()">
+              <v-expansion-panel-header>
+                <template v-slot:default>
+                  <v-row no-gutters justify="center" class="title font-weight-regular">Search</v-row>
+                </template>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-form ref="form" v-model="valid">
+                  <v-row dense justify="center">
+                    <v-text-field
+                      dense
+                      outlined
+                      v-model="code"
+                      :rules="codeRules"
+                      label="Your Connect Code"
+                      required
+                    ></v-text-field>
+                  </v-row>
+                  <v-row dense justify="center">
+                    <v-text-field
+                      dense
+                      outlined
+                      v-model="opponentCode"
+                      :rules="opponentCodeRules"
+                      label="Opponent's Connect Code"
+                    ></v-text-field>
+                  </v-row>
+                  <v-row dense justify="center">
+                    <v-autocomplete
+                      multiple
+                      outlined
+                      v-model="characters"
+                      :items="characterList"
+                      label="Your Characters"
+                    >
+                      <template v-slot:selection="selection">
+                        <v-chip v-bind="selection.attrs" @click="removeCharacter(selection.item)">
+                          <span
+                            v-if="selection.item == 'Sheik / Zelda'"
+                            style="display: inherit;"
+                          >
+                            <v-img
+                              :src="require(`../assets/stock_icons/Sheik.png`)"
+                              :alt="selection.item"
+                              max-width="20"
+                              style="margin-right: 5px;"
+                            ></v-img>
+                            <v-img
+                              :src="require(`../assets/stock_icons/Zelda.png`)"
+                              :alt="selection.item"
+                              max-width="20"
+                              :style="characters.length > 1 ? '' : 'margin-right: 5px;'"
+                            ></v-img>
+                          </span>
+                          <v-img
+                            v-if="selection.item != 'Sheik / Zelda'"
+                            :src="require(`../assets/stock_icons/${selection.item}.png`)"
+                            :alt="selection.item"
+                            max-width="20"
+                            :style="characters.length > 1 ? '' : 'margin-right: 5px;'"
+                          ></v-img>
+                          <span v-if="characters.length < 2">{{ selection.item }}</span>
+                        </v-chip>
+                      </template>
+                      <template v-slot:item="character">
+                        <span v-if="character.item == 'Sheik / Zelda'" style="display: inherit;">
+                          <v-img
+                            :src="require(`../assets/stock_icons/Sheik.png`)"
+                            :alt="character.item"
+                            max-width="20"
+                            style="margin-right: 5px;"
+                          ></v-img>
+                          <v-img
+                            :src="require(`../assets/stock_icons/Zelda.png`)"
+                            :alt="character.item"
+                            max-width="20"
+                            style="margin-right: 5px;"
+                          ></v-img>
+                        </span>
+                        <v-img
+                          v-if="character.item != 'Sheik / Zelda'"
+                          :src="require(`../assets/stock_icons/${character.item}.png`)"
+                          :alt="character.item"
+                          max-width="20"
+                          style="margin-right: 5px;"
+                        ></v-img>
+                        {{ character.item }}
+                      </template>
+                    </v-autocomplete>
+                  </v-row>
+                  <v-row dense justify="center">
+                    <v-autocomplete
+                      multiple
+                      outlined
+                      v-model="opponentCharacters"
+                      :items="characterList"
+                      label="Opponent's Characters"
+                    >
+                      <template v-slot:selection="selection">
+                        <v-chip
+                          v-bind="selection.attrs"
+                          @click="removeOpponentCharacter(selection.item)"
+                        >
+                          <span
+                            v-if="selection.item == 'Sheik / Zelda'"
+                            style="display: inherit;"
+                          >
+                            <v-img
+                              :src="require(`../assets/stock_icons/Sheik.png`)"
+                              :alt="selection.item"
+                              max-width="20"
+                              style="margin-right: 5px;"
+                            ></v-img>
+                            <v-img
+                              :src="require(`../assets/stock_icons/Zelda.png`)"
+                              :alt="selection.item"
+                              max-width="20"
+                              :style="opponentCharacters.length > 1 ? '' : 'margin-right: 5'"
+                            ></v-img>
+                          </span>
+                          <v-img
+                            v-if="selection.item != 'Sheik / Zelda'"
+                            :src="require(`../assets/stock_icons/${selection.item}.png`)"
+                            :alt="selection.item"
+                            max-width="20"
+                            :style="opponentCharacters.length > 1 ? '' : 'margin-right: 5px;'"
+                          ></v-img>
+                          <span v-if="opponentCharacters.length < 2">{{ selection.item }}</span>
+                        </v-chip>
+                      </template>
+                      <template v-slot:item="character">
+                        <span
+                          v-if="character.item == 'Sheik / Zelda'"
+                          style="display: inherit;"
+                        >
+                          <v-img
+                            :src="require(`../assets/stock_icons/Sheik.png`)"
+                            :alt="character.item"
+                            max-width="20"
+                            style="margin-right: 5px;"
+                          ></v-img>
+                          <v-img
+                            :src="require(`../assets/stock_icons/Zelda.png`)"
+                            :alt="character.item"
+                            max-width="20"
+                            style="margin-right: 5px;"
+                          ></v-img>
+                        </span>
+                        <v-img
+                          v-if="character.item != 'Sheik / Zelda'"
+                          :src="require(`../assets/stock_icons/${character.item}.png`)"
+                          :alt="character.item"
+                          max-width="20"
+                          style="margin-right: 5px;"
+                        ></v-img>
+                        {{ character.item }}
+                      </template>
+                    </v-autocomplete>
+                  </v-row>
+                  <v-row dense justify="center">
+                    <v-autocomplete
+                      multiple
+                      outlined
+                      v-model="stages"
+                      :items="stageList"
+                      label="Stages"
+                    >
+                      <template v-slot:selection="{item, attrs}">
+                        <v-chip v-bind="attrs" @click="removeStage(item)">{{ item }}</v-chip>
+                      </template>
+                      <template v-slot:item="selection">{{ selection.item }}</template>
+                    </v-autocomplete>
+                  </v-row>
+                  <v-row dense justify="center">
+                    <v-checkbox
+                      v-model="excludeLRAStart"
+                      label="Exclude all games ending with L+R+A+Start"
+                      style="width: 80%;"
+                    ></v-checkbox>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{on, attrs}">
+                        <v-icon
+                          v-bind="attrs"
+                          v-on="on"
+                          style="margin-bottom: 2px; margin-left: 5px;"
+                        >mdi-information</v-icon>
+                      </template>
+                      <span>
+                        Note: All games quit out within 30 seconds are starting are automatically excluded.
+                        <br />This option will exclude
+                        <strong>ALL</strong> games quit out before ending regardless of length.
+                      </span>
+                    </v-tooltip>  
+                  </v-row>
+                  <v-row no-gutters justify="center">
+                    <v-checkbox
+                      style="margin: 0; width: 80%;"
+                      v-model="searchAllTime"
+                      label="Search games from all time"
+                    ></v-checkbox>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{on, attrs}">
+                        <v-icon
+                          v-bind="attrs"
+                          v-on="on"
+                          style="margin-bottom: 18px; margin-left: 5px;"
+                        >mdi-information</v-icon>
+                      </template>
+                      <span>
+                        Leave checked to serach games matching the criteria regardless of date.
+                        <br />Uncheck to pick a date range. Selecting one date will search from that date to present, two dates will search between those dates.
+                      </span>
+                    </v-tooltip>
+                  </v-row>
+                  <v-row v-if="!searchAllTime" no-gutters justify="center" style="margin-bottom: 25px;">
+                    <v-date-picker
+                      @click:date="onDateChange"
+                      :show-current="false"
+                      :allowed-dates="allowedDates"
+                      v-model="dates"
+                      multiple
+                      color="primary"
+                      no-title
+                      elevation="3"
+                    ></v-date-picker>
+                  </v-row>
+                  <v-row no-gutters justify="center">
+                    <v-btn style="margin-right: 15px;" color="normal" @click="reset()">Reset</v-btn>
+                    <v-btn :disabled="!valid" color="success" @click="getStats()">Search</v-btn>
+                  </v-row>
+                </v-form>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+            <v-fade-transition>
+              <v-overlay
+                v-if="waiting"
+                absolute
+                class="justify-center"
+                color="#DCDCDC"
+                :opacity=".8"
+              >
+                <v-row no-gutters justify="center">
+                  <v-progress-circular :size="70" :width="7" color="primary" indeterminate></v-progress-circular>
+                </v-row>
+              </v-overlay>
+            </v-fade-transition>
+          </v-expansion-panels>
+        </div>
       </v-row>
-      <v-row no-gutters justify="space-around">
-        <StatsCard
-          :stats="stats"
-          :playerTag="stats.player.playerData.tag ? stats.player.playerData.tag : stats.player.playerData.code"
-          :opponentTag="stats && submittedOpponentCode ? (stats.opponent.playerData[submittedOpponentCode] ? stats.opponent.playerData[submittedOpponentCode] : submittedOpponentCode) : 'Opponent'"
-        />
+      <br />
+      <v-row v-if="stats && stats.numGames == 0" justify="center" no-gutters>
+        <v-alert type="error" class="text-center" color="#e33a0b" style="width: 85%;">
+          No games found with search criteria.
+          <router-link style="color: white;" to="/">Click here</router-link> to upload more slippi files.
+        </v-alert>
       </v-row>
+      <v-row v-if="error" justify="center" no-gutters>
+        <v-alert type="error" class="text-center" color="#e33a0b" style="width: 85%;">
+          Unknown error occured. Please try again later.
+        </v-alert>
+      </v-row>
+      <div v-if="stats && stats.numGames > 0">
+        <v-row no-gutters justify="center">
+          <v-alert type="success" class="text-center" color="#44A963" style="width: 85%;">
+            {{ stats.numGames}} games found<span v-if="stats.timeouts > 0">({{ stats.timeouts }} timeout<span v-if="stats.timeouts > 1">s</span>)</span>!
+          </v-alert>
+        </v-row>
+        <v-row no-gutters justify="center">
+          <v-tooltip bottom v-model="showShareToolTip">
+            <template v-slot:activator="{}">
+              <v-btn outlined color="#44A963" @click="share()">Share</v-btn>
+            </template>
+            <span>
+              URL copied to clipboard!
+            </span>
+          </v-tooltip>
+        </v-row>
+        <v-row no-gutters justify="center">
+          <StatsCard
+            :stats="stats"
+            :playerTag="stats.player.playerData.tag ? stats.player.playerData.tag : stats.player.playerData.code"
+            :opponentTag="stats && submittedOpponentCode ? (stats.opponent.playerData[submittedOpponentCode] ? stats.opponent.playerData[submittedOpponentCode] : submittedOpponentCode) : 'Opponent'"
+          />
+        </v-row>
+      </div>
     </div>
   </v-container>
 </template>
