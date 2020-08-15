@@ -20,9 +20,11 @@ fs.readdir('tmp', (err, files) => {
     if (err) console.log('Unable to read directory:', err);
 
     for (const file of files) {
-        fs.unlink(path.join('tmp', file), err => {
-            if (err) console.log('Unable to delete file:', err);
-        });
+        if (file != '.gitkeep') {
+            fs.unlink(path.join('tmp', file), err => {
+                if (err) console.log('Unable to delete file:', err);
+            });
+        }
     }
 });
 
