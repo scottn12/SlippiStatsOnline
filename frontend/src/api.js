@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = 'http://localhost:3000/slippi/'
+const baseURL = 'https://slippistats.online/slippi/'
 
 export default {
   save: (data, onUploadProgress) => {
