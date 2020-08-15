@@ -95,12 +95,17 @@
         </v-hover>
         <v-card v-if="results" class="mx-auto justify-center" style="margin-top: 25px;">
           <v-card-title class="justify-center">Upload Results</v-card-title>
+          <div v-if="results == 'tooLarge'" style="margin-left: 15%; margin-right: 15%; padding-bottom: 10px;">
+            <v-alert  type="error" class="text-center" color="#e33a0b">
+              Upload limit reached (10GB). Try "zipping" your files to reduce the size, or uploading in smaller batches.
+            </v-alert>
+          </div>
           <div v-if="results == 'error'" style="margin-left: 15%; margin-right: 15%; padding-bottom: 10px;">
             <v-alert  type="error" class="text-center" color="#e33a0b">
               Unknown error occurred. Please try again later.
             </v-alert>
           </div>
-          <div v-if="results != 'error'" style="margin-left: 5%; margin-right: 5%; padding-bottom: 15px;">
+          <div v-if="results != 'error' && results != 'tooLarge'" style="margin-left: 5%; margin-right: 5%; padding-bottom: 15px;">
             <div>
               <span style="font-size: 28px; color: #44A963">{{ results.success }}</span> games uploaded succesfully
             </div>
@@ -231,12 +236,17 @@
         </v-hover>
         <v-card v-if="results" class="mx-auto justify-center" style="margin-top: 25px;">
           <v-card-title class="justify-center">Upload Results</v-card-title>
+          <div v-if="results == 'tooLarge'" style="margin-left: 15%; margin-right: 15%; padding-bottom: 10px;">
+            <v-alert  type="error" class="text-center" color="#e33a0b">
+              Upload limit reached (10GB). Try "zipping" your files to reduce the size, or uploading in smaller batches.
+            </v-alert>
+          </div>
           <div v-if="results == 'error'" style="margin-left: 15%; margin-right: 15%; padding-bottom: 10px;">
             <v-alert  type="error" class="text-center" color="#e33a0b">
               Unknown error occurred. Please try again later.
             </v-alert>
           </div>
-          <div v-if="results != 'error'" style="margin-left: 5%; margin-right: 5%; padding-bottom: 15px;">
+          <div v-if="results != 'error' && results != 'tooLarge'" style="margin-left: 5%; margin-right: 5%; padding-bottom: 15px;">
             <div>
               <span style="font-size: 28px; color: #44A963">{{ results.success }}</span> games uploaded succesfully
             </div>
@@ -288,6 +298,7 @@ export default {
     fileError: undefined,
     results: undefined,
     viewDetails: false,
+    tooLarge: false,
     badFiles: {},
     openReasons: []
   }),
@@ -303,15 +314,25 @@ export default {
         }
       });
     },
-    send() {
+    send() { 
+      this.tooLarge = false;
       this.progress = 0;
       this.results = undefined;
       this.badFiles = {};
       this.openReasons = [];
+      var totalUploadSize = 0;
       var data = new FormData();
       this.files.forEach((file) => {
+        totalUploadSize += file.size;
         data.append("files", file);
       });
+      if (totalUploadSize >= 10737418240) {  // 10 GB
+        console.log(totalUploadSize)
+        this.results = 'tooLarge';
+        this.progress = undefined;
+        this.waiting = false;
+        return;
+      }
       this.files = [];
       API.save(data, this.onProgressUpdate)
         .then((response) => {
