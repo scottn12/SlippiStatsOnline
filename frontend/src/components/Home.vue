@@ -8,7 +8,7 @@
           <v-card-text>
             <p>This website is designed to provide a way to analyze a large number of <a href="https://slippi.gg/" target="_blank">Slippi Online</a> games at once.</p>
             <p>In addition to providing a clean interface to view and compare stats, this application can also filter the dataset using parameters such as opponent, characters played, stages played on, and more.</p>
-            <p><a href="https://github.com/scottn12/ScottStats" target="_blank">Source Code</a></p>
+            <p style="margin: 0;"><a href="https://github.com/scottn12/ScottStats" target="_blank">Source Code</a></p>
           </v-card-text>
           <v-card-title class="header" style="padding-top: 0;">How To Use</v-card-title>
           <v-card-text>
@@ -23,6 +23,11 @@
               <li>Once all processing is complete, you can now view your stats. Click on the "View Stats" button in the top right of this page to be navigated to the stats page.</li>
               <li>On the stats page, you must enter at least your own connect code. This is the code you give to others when using direct play on Slippi Online. Additonally, many other options are available to filter with. </li>
             </ol>
+          </v-card-text>
+          <v-card-title class="header" style="padding-top: 0;">Contact</v-card-title>
+          <v-card-text>
+            <p>If you run into any issues or would like to provide feedback, feel free to contact me on Discord (<strong>skaht#6304</strong>).</p>
+            <p>Alternatively, you can email me at <a href = "mailto: scott.norton12@gmail.com">scott.norton12@gmail.com</a>.</p>
           </v-card-text>
         </v-card>
       </div>
@@ -149,7 +154,7 @@
           <v-card-text>
             <p>This website is designed to provide a way to analyze a large number of <a href="https://slippi.gg/" target="_blank">Slippi Online</a> games at once.</p>
             <p>In addition to providing a clean interface to view and compare stats, this application can also filter the dataset using parameters such as opponent, characters played, stages played on, and more.</p>
-            <p><a href="https://github.com/scottn12/ScottStats" target="_blank">Source Code</a></p>
+            <p style="margin: 0;"><a href="https://github.com/scottn12/ScottStats" target="_blank">Source Code</a></p>
           </v-card-text>
           <v-card-title class="header" style="padding-top: 0;">How To Use</v-card-title>
           <v-card-text>
@@ -164,6 +169,11 @@
               <li>Once all processing is complete, you can now view your stats. Click on the "View Stats" button in the top right of this page to be navigated to the stats page.</li>
               <li>On the stats page, you must enter at least your own connect code. This is the code you give to others when using direct play on Slippi Online. Additonally, many other options are available to filter with. </li>
             </ol>
+          </v-card-text>
+          <v-card-title class="header" style="padding-top: 0;">Contact</v-card-title>
+          <v-card-text>
+            <p>If you run into any issues or would like to provide feedback, feel free to contact me on Discord (<strong>skaht#6304</strong>).</p>
+            <p>Alternatively, you can email me at <a href = "mailto: scott.norton12@gmail.com">scott.norton12@gmail.com</a>.</p>
           </v-card-text>
         </v-card>
       </v-row>
