@@ -283,7 +283,7 @@
       <v-row v-if="error" justify="center" no-gutters>
         <v-col cols="5">
           <v-alert type="error" class="text-center" color="#e33a0b">
-            Unknown error occured. Please try again later.
+            {{ errorMessage }}
           </v-alert>
         </v-col>
       </v-row>
@@ -583,7 +583,7 @@
       </v-row>
       <v-row v-if="error" justify="center" no-gutters>
         <v-alert type="error" class="text-center" color="#e33a0b" style="width: 85%;">
-          Unknown error occured. Please try again later.
+          {{ errorMessage }}
         </v-alert>
       </v-row>
       <div v-if="stats && stats.numGames > 0">
@@ -710,48 +710,35 @@ export default {
     showShareToolTip: false,
     error: false,
     waiting: false,
+    errorMessage: undefined,
     allowedDates: (val) =>
       new Date(new Date(val).toLocaleDateString()) <
       new Date(new Date().toLocaleDateString()),
     codeRules: [
       (v) => !!v || v != "" || "Player code is required",
+      (v) => !v || v.length <= 8 || "Player code cannot be greater than 8 characters",
       (v) =>
-        /^[a-zA-Z]{2,4}#?\d{3}$/.test(v) ||
-        "Player code must be in format: ABCD#123 or ABCD123",
+        /^[a-zA-Z\d]{1,6}#\d{1,6}$/.test(v) ||
+        "Player code must be in format: ABCD#123",
     ],
     opponentCodeRules: [
+      (v) => !v  || v.length <= 8 || "Opponent code cannot be greater than 8 characters",
       (v) =>
         !v ||
-        /^$|^[a-zA-Z]{2,4}#?\d{3}$/.test(v) ||
-        "Player code must be in format: ABCD#123 or ABCD123",
+        /^[a-zA-Z\d]{1,6}#\d{1,6}$/.test(v) ||
+        "Opponent code must be in format: ABCD#123"
     ],
   }),
   mounted: function () {
     let code = this.$route.params.code;
     if (code) {
-      let codeFirstDigit = code.indexOf(code.match(/\d/));
-      if (codeFirstDigit == -1) {
-        this.code = code;
-      } else {
-        this.code =
-          code.substring(0, codeFirstDigit).toLocaleUpperCase() +
-          "#" +
-          code.substring(codeFirstDigit);
-      }
+      this.code = code.replace('-', '#');
       this.$refs.form.validate();
     }
 
     let opponentCode = this.$route.query.opponentCode;
     if (opponentCode) {
-      let codeFirstDigit = opponentCode.indexOf(opponentCode.match(/\d/));
-      if (codeFirstDigit == -1) {
-        this.opponentCode = opponentCode;
-      } else {
-        this.opponentCode =
-          opponentCode.substring(0, codeFirstDigit).toLocaleUpperCase() +
-          "#" +
-          opponentCode.substring(codeFirstDigit);
-      }
+      this.opponentCode = code.replace('-', '#');
       this.$refs.form.validate();
     }
 
@@ -832,7 +819,7 @@ export default {
       this.excludeLRAStart = true;
     }
  
-    // If the code is provided, excecute a search right away
+    // If the code is provided, excecute a search right away if form is valid
     if (code) {
       this.getStats();
     }
@@ -840,36 +827,13 @@ export default {
   },
   methods: {
     getStats() {
+      this.errorMessage = undefined;
       this.waiting = true;
       this.error = false;
       let data = {};
-      let code = this.code.replace("#", ""); // Remove # for api request
-      if (this.code.indexOf("#") == -1) {
-        // Add # for display if not provided
-        let codeFirstDigit = code.indexOf(this.code.match(/\d/));
-        if (codeFirstDigit != -1) {
-          this.code =
-            this.code.substring(0, codeFirstDigit).toLocaleUpperCase() +
-            "#" +
-            this.code.substring(codeFirstDigit);
-        }
-      }
+      let code = this.code.replace("#", "-"); // Replace # for api request
       if (this.opponentCode) {
-        data.opponentCode = this.opponentCode.replace("#", "");
-        if (this.opponentCode.indexOf("#") == -1) {
-          // Add # for display if not provided
-          let codeFirstDigit = this.opponentCode.indexOf(
-            this.opponentCode.match(/\d/)
-          );
-          if (codeFirstDigit != -1) {
-            this.opponentCode =
-              this.opponentCode
-                .substring(0, codeFirstDigit)
-                .toLocaleUpperCase() +
-              "#" +
-              this.opponentCode.substring(codeFirstDigit);
-          }
-        }
+        data.opponentCode = this.opponentCode.replace("#", "-");
       }
       this.submittedOpponentCode = this.opponentCode;
       if (this.excludeLRAStart) data.excludeLRAStart = true;
@@ -914,9 +878,10 @@ export default {
           this.waiting = false;
         })
         .catch((err) => {
-          console.log(err);
+          console.log(err.response);
           this.error = true;
           this.waiting = false;
+          this.errorMessage = err.response.data.message ? err.response.data.message : 'Unknown error occured. Please try again later.';
         });
     },
     reset() {
@@ -924,15 +889,7 @@ export default {
       if (!code) {
         this.code = "";
       } else {
-        let codeFirstDigit = code.indexOf(code.match(/\d/));
-        if (codeFirstDigit == -1) {
-          this.code = code;
-        } else {
-          this.code =
-            code.substring(0, codeFirstDigit).toLocaleUpperCase() +
-            "#" +
-            code.substring(codeFirstDigit);
-        }
+        this.code = code.replace('-', '#');
       }
       this.characters = [];
       this.stages = [];
@@ -943,6 +900,7 @@ export default {
       this.submittedOpponentCode = undefined;
       this.searchAllTime = true;
       this.dates = [];
+      this.$refs.form.validate();
     },
     panelClick() {
       if (this.panel == 0) {

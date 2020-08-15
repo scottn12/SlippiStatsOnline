@@ -188,7 +188,7 @@
           </v-col>
           <v-col cols="3">
             <div class="chartTitle">
-              Actions Per Minute
+              Inputs Per Minute
               <v-tooltip right>
                 <template v-slot:activator="{on, attrs}">
                   <v-icon
@@ -500,7 +500,7 @@
         </v-row>
         <v-row no-gutters justify="space-around" align="center" style="margin-top: 15px;">
           <div class="chartTitle">
-            Actions Per Minute
+            Inputs Per Minute
             <v-tooltip bottom>
               <template v-slot:activator="{on, attrs}">
                 <v-icon
