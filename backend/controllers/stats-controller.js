@@ -22,7 +22,6 @@ const statsController = (db) => {
         var code;
         if (req.params.code) {
             code = req.params.code.replace('-', '#').toLocaleUpperCase();
-            console.log(code);
             if (!code.match(/^[a-zA-Z\d]{1,6}#\d{1,6}$/)) {
                 return res.status(400).send({ message: 'Invalid player code provided.' });
             }
@@ -36,7 +35,7 @@ const statsController = (db) => {
         if (req.query.opponentCode) {
             if (!data.$and) data.$and = [];
             let opponentCode = req.params.code.replace('-', '#').toLocaleUpperCase();
-            if (!opponentCodeFirstDigit.match(/^[a-zA-Z\d]{1,6}#\d{1,6}$/)) {
+            if (!opponentCode.match(/^[a-zA-Z\d]{1,6}#\d{1,6}$/)) {
                 return res.status(400).send({ message: 'Invalid opponent player code provided.' });
             }
             data.$and.push({ $or: [{ p1Code: opponentCode }, { p2Code: opponentCode }] });
