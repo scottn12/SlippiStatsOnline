@@ -199,7 +199,7 @@ const parserController = (db) => {
             gameData.p1StockDifferential = p1LastFrame.stocksRemaining;
             gameData.p2StockDifferential = p2LastFrame.stocksRemaining;
             if (gameEnd.gameEndMethod == 7) { // L+R+A+Start
-                if (metadata.lastFrame / 60 > 30) {  // Checks if game was over 30 seconds long
+                if (metadata.lastFrame / 60 < 30) {  // Checks if game was over 30 seconds long
                     badFile = { file: path.replace(/^.*[\\\/]/, ''), reason: 'Game too short.' };
                     return { success, badFile };  // Skip game if too short and L+R+A+Start
                 }
