@@ -99,6 +99,10 @@ const parserController = (db) => {
                     if (totalGames == success + badFiles.length) {  // Check if all games are done
                         resolve();
                     }
+                })
+                .on('error', function (error) {
+                    console.log(`Error parsing:\n${error}`);
+                    resolve();
                 });
         });
         return { success, badFiles };
