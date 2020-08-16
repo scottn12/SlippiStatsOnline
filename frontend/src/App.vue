@@ -3,7 +3,7 @@
     
     <!-- Desktop -->
     <v-app-bar v-if="!$vuetify.breakpoint.xsOnly" app color="primary" dark style="z-index: 9999;">
-      <v-toolbar-title style="cursor: pointer; font-size: 28px;" @click="$router.push({ path: '/' })">Slippi Stats</v-toolbar-title>
+      <v-toolbar-title style="cursor: pointer; font-size: 28px;" @click="$router.push({ path: '/' })">Slippi Stats Online</v-toolbar-title>
       <v-spacer></v-spacer>
 
       <v-btn light class="ma-2" @click="$router.push({ path: '/' })">
@@ -18,7 +18,7 @@
 
     <!-- Mobile -->
     <v-app-bar v-if="$vuetify.breakpoint.xsOnly" app color="primary" dark style="z-index: 9999;">
-      <v-toolbar-title style="cursor: pointer;" @click="$router.push({ path: '/' })">Slippi Stats</v-toolbar-title>
+      <v-toolbar-title style="cursor: pointer;" @click="$router.push({ path: '/' })">Slippi Stats Online</v-toolbar-title>
       
       <v-menu v-if="$vuetify.breakpoint.xsOnly" bottom right offset-x>
         <template v-slot:activator="{ on }">
