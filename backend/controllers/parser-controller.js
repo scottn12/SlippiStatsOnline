@@ -47,6 +47,9 @@ const parserController = (db) => {
                     if (err) {
                         console.log(`Error deleting ${file.filename}:\n${err}`);
                     }
+                    else {
+                        console.log(`Deleted ${file.filename}:\n${err}`);
+                    }
                 });
             };
 
