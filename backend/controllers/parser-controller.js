@@ -79,19 +79,25 @@ const parserController = (db) => {
             fs.createReadStream(path)
                 .pipe(unzipper.Parse())
                 .on('entry', async entry => {
+                    
+                    try {
+                        totalGames++;
 
-                    totalGames++;
+                        // Get Game Data
+                        const content = await entry.buffer();
+                        var game = new SlippiGame(content);
 
-                    // Get Game Data
-                    const content = await entry.buffer();
-                    var game = new SlippiGame(content);
-
-                    var result = await parseGame(game, entry.path);
-                    if (result.success) {
-                        success++;
+                        var result = await parseGame(game, entry.path);
+                        if (result.success) {
+                            success++;
+                        }
+                        else {
+                            badFiles.push(result.badFile);
+                        }
                     }
-                    else {
-                        badFiles.push(result.badFile);
+                    catch (e) {
+                        console.log(`Error parsing:\n${e}`);
+                        badFiles.push({ file: entry.path.replace(/^.*[\\\/]/, ''), reason: `Error parsing game data.` });
                     }
 
                     await entry.autodrain();
