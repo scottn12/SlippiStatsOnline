@@ -9,51 +9,58 @@ const parserController = (db) => {
 
     const parse = async (req, res) => {
 
-        var success = 0;
-        var badFiles = [];
+        try {
+            
+            var success = 0;
+            var badFiles = [];
 
-        if (!req.files || req.files.length == 0) {
-            return res.status(400).send({ message: 'No files provided' });
-        }
-
-        for (const file of req.files) {
-
-            var path = file.path;
-            let ext = file.originalname.split(".").pop();
-
-            if (ext == 'zip') {
-                var result = await parseZip(path);
-                success += result.success;
-                badFiles = badFiles.concat(result.badFiles);
+            if (!req.files || req.files.length == 0) {
+                return res.status(400).send({ message: 'No files provided' });
             }
-            else if (ext == 'slp') {
-                var result = await parseSlp(path);
-                if (result.success) {
-                    success++;
+
+            for (const file of req.files) {
+
+                var path = file.path;
+                let ext = file.originalname.split(".").pop();
+
+                if (ext == 'zip') {
+                    var result = await parseZip(path);
+                    success += result.success;
+                    badFiles = badFiles.concat(result.badFiles);
+                }
+                else if (ext == 'slp') {
+                    var result = await parseSlp(path);
+                    if (result.success) {
+                        success++;
+                    }
+                    else {
+                        badFiles.push(result.badFile);
+                    }
                 }
                 else {
-                    badFiles.push(result.badFile);
+                    badFiles.push({ file: file.originalname, reason: 'Invalid file format.' });
                 }
-            }
-            else {
-                badFiles.push({ file: file.originalname, reason: 'Invalid file format.' });
-            }
 
 
-            // Delete file
-            fs.unlink(path, (result, err) => {
-                if (err) {
-                    console.log(`Error deleting ${file.filename}:\n${err}`);
-                }
-            });
-        };
+                // Delete file
+                fs.unlink(path, (result, err) => {
+                    if (err) {
+                        console.log(`Error deleting ${file.filename}:\n${err}`);
+                    }
+                });
+            };
 
-        // Allow last file to register (meh)
-        setTimeout(() => {
-            console.log('success:', success);
-            console.log('badFiles:', badFiles.length);
-            res.send({ success, badFiles });
-        }, 2000);
+            // Allow last file to register (meh)
+            setTimeout(() => {
+                console.log('success:', success);
+                console.log('badFiles:', badFiles.length);
+                res.send({ success, badFiles });
+            }, 2000);
+        }
+        catch (e) {
+            console.log('ERROR ON PARSE:', e);
+            return res.status(500).send({ message: 'An unknown error has occurred. Please try again later.' })
+        }
 
     };
 
