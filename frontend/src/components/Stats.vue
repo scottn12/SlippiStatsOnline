@@ -738,7 +738,7 @@ export default {
 
     let opponentCode = this.$route.query.opponentCode;
     if (opponentCode) {
-      this.opponentCode = code.replace('-', '#');
+      this.opponentCode = opponentCode.replace('-', '#');
       this.$refs.form.validate();
     }
 
