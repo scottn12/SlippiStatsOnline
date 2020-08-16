@@ -1,4 +1,4 @@
-# Scott Stats
+# Slippi Stats Online
 
 This website is designed to provide a way to analyze a large number of [Slippi Online](https://slippi.gg/) games at once.
 

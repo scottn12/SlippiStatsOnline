@@ -8,7 +8,7 @@
           <v-card-text>
             <p>This website is designed to provide a way to analyze a large number of <a href="https://slippi.gg/" target="_blank">Slippi Online</a> games at once.</p>
             <p>In addition to providing a clean interface to view and compare stats, this application can also filter the dataset using parameters such as opponent, characters played, stages played on, and more.</p>
-            <p style="margin: 0;"><a href="https://github.com/scottn12/ScottStats" target="_blank">Source Code</a></p>
+            <p style="margin: 0;"><a href="https://github.com/scottn12/SlippiStatsOnline" target="_blank">Source Code</a></p>
           </v-card-text>
           <v-card-title class="header" style="padding-top: 0;">How To Use</v-card-title>
           <v-card-text>
@@ -154,7 +154,7 @@
           <v-card-text>
             <p>This website is designed to provide a way to analyze a large number of <a href="https://slippi.gg/" target="_blank">Slippi Online</a> games at once.</p>
             <p>In addition to providing a clean interface to view and compare stats, this application can also filter the dataset using parameters such as opponent, characters played, stages played on, and more.</p>
-            <p style="margin: 0;"><a href="https://github.com/scottn12/ScottStats" target="_blank">Source Code</a></p>
+            <p style="margin: 0;"><a href="https://github.com/scottn12/SlippiStatsOnline" target="_blank">Source Code</a></p>
           </v-card-text>
           <v-card-title class="header" style="padding-top: 0;">How To Use</v-card-title>
           <v-card-text>
