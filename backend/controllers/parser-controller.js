@@ -9,17 +9,15 @@ const parserController = (db) => {
 
     const parse = async (req, res) => {
 
-        try {
-            
-            var success = 0;
-            var badFiles = [];
+        var success = 0;
+        var badFiles = [];
 
-            if (!req.files || req.files.length == 0) {
-                return res.status(400).send({ message: 'No files provided' });
-            }
+        if (!req.files || req.files.length == 0) {
+            return res.status(400).send({ message: 'No files provided' });
+        }
 
-            for (const file of req.files) {
-
+        for (const file of req.files) {
+            try {
                 var path = file.path;
                 let ext = file.originalname.split(".").pop();
 
@@ -47,23 +45,27 @@ const parserController = (db) => {
                     if (err) {
                         console.log(`Error deleting ${file.filename}:\n${err}`);
                     }
-                    else {
-                        console.log(`Deleted ${file.filename}:\n${result}`);
+                });
+
+            }
+            catch (e) {
+                console.log('ERROR ON PARSE:', e);
+
+                // Delete file
+                fs.unlink(path, (result, err) => {
+                    if (err) {
+                        console.log(`Error deleting ${file.filename}:\n${err}`);
                     }
                 });
-            };
+            }
+        };
 
-            // Allow last file to register (meh)
-            setTimeout(() => {
-                console.log('success:', success);
-                console.log('badFiles:', badFiles.length);
-                res.send({ success, badFiles });
-            }, 2000);
-        }
-        catch (e) {
-            console.log('ERROR ON PARSE:', e);
-            return res.status(500).send({ message: 'An unknown error has occurred. Please try again later.' })
-        }
+        // Allow last file to register (meh)
+        setTimeout(() => {
+            console.log('success:', success);
+            console.log('badFiles:', badFiles.length);
+            res.send({ success, badFiles });
+        }, 2000);
 
     };
 
