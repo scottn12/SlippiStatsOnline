@@ -2,6 +2,11 @@
   <v-container>
     <!-- Desktop -->
     <v-flex v-if="!$vuetify.breakpoint.xsOnly" row wrap class="justify-space-around" style="margin-top: 15px;">
+    <v-row no-gutters justify="center">
+      <v-alert type="warning" class="text-center" style="width: 40%;">
+        Due to high traffic, some uploads may fail. If this is the case, try breaking your uploads into smaller batches, or try again at a later time. Sorry for the inconvience.
+      </v-alert>
+    </v-row>
       <div style="width: 50%;">
         <v-card class="mx-auto justify-center">
           <v-card-title class="header">About</v-card-title>
@@ -19,14 +24,14 @@
               </li>
               <li>Click on the "File Input" button under Upload Slippi Games on the right. Select one or more .zip or .slp files and click on the upload button.</li>
               <li>At this point, your files will begin to upload. Please remain on the page until the upload is complete.</li>
-              <li>After the upload completes, additional proccessing will take place to gather the stats from each game. This may take several minutes depending on the number of files uploaded. It is still reccomended (although not necessary) to remain on this page to see the results of the upload in case there were any files which could not be parsed.</li>
+              <li>After the upload completes, additional proccessing will take place to gather the stats from each game. This may take several minutes depending on the number of files uploaded. It is still recommended (although not necessary) to remain on this page to see the results of the upload in case there were any files which could not be parsed.</li>
               <li>Once all processing is complete, you can now view your stats. Click on the "View Stats" button in the top right of this page to be navigated to the stats page.</li>
               <li>On the stats page, you must enter at least your own connect code. This is the code you give to others when using direct play on Slippi Online. Additonally, many other options are available to filter with. </li>
             </ol>
           </v-card-text>
           <v-card-title class="header" style="padding-top: 0;">Contact</v-card-title>
           <v-card-text>
-            <p>If you run into any issues or would like to provide feedback, feel free to contact me on Discord (<strong>skaht#6304</strong>).</p>
+            <p>If you run into any issues or would like to provide feedback, feel free to contact me on Discord (<strong>skaht#6034</strong>).</p>
             <p>Alternatively, you can email me at <a href = "mailto: scott.norton12@gmail.com">scott.norton12@gmail.com</a>.</p>
           </v-card-text>
         </v-card>
@@ -107,7 +112,7 @@
           </div>
           <div v-if="results == 'error'" style="margin-left: 15%; margin-right: 15%; padding-bottom: 10px;">
             <v-alert  type="error" class="text-center" color="#e33a0b">
-              Unknown error occurred. Please try again later.
+              {{ errorMessage ? errorMessage : 'Unknown error occurred. Please try again later.'}}
             </v-alert>
           </div>
           <div v-if="results != 'error' && results != 'tooLarge'" style="margin-left: 5%; margin-right: 5%; padding-bottom: 15px;">
@@ -147,7 +152,13 @@
 
 
     <!-- Mobile -->
+
     <div v-if="$vuetify.breakpoint.xsOnly" style="margin-top: 15px;">
+      <v-row no-gutters justify="center">
+        <v-alert type="warning" class="text-center" style="width: 90%;">
+          Due to high traffic, some uploads may fail. If this is the case, try breaking your uploads into smaller batches, or try again at a later time. Sorry for the inconvience.
+        </v-alert>
+      </v-row>
       <v-row no-gutters>
         <v-card class="mx-auto justify-center">
           <v-card-title class="header">About</v-card-title>
@@ -165,14 +176,14 @@
               </li>
               <li>Click on the "File Input" button under Upload Slippi Games on the right. Select one or more .zip or .slp files and click on the upload button.</li>
               <li>At this point, your files will begin to upload. Please remain on the page until the upload is complete.</li>
-              <li>After the upload completes, additional proccessing will take place to gather the stats from each game. This may take several minutes depending on the number of files uploaded. It is still reccomended (although not necessary) to remain on this page to see the results of the upload in case there were any files which could not be parsed.</li>
+              <li>After the upload completes, additional proccessing will take place to gather the stats from each game. This may take several minutes depending on the number of files uploaded. It is still recommended (although not necessary) to remain on this page to see the results of the upload in case there were any files which could not be parsed.</li>
               <li>Once all processing is complete, you can now view your stats. Click on the "View Stats" button in the top right of this page to be navigated to the stats page.</li>
               <li>On the stats page, you must enter at least your own connect code. This is the code you give to others when using direct play on Slippi Online. Additonally, many other options are available to filter with. </li>
             </ol>
           </v-card-text>
           <v-card-title class="header" style="padding-top: 0;">Contact</v-card-title>
           <v-card-text>
-            <p>If you run into any issues or would like to provide feedback, feel free to contact me on Discord (<strong>skaht#6304</strong>).</p>
+            <p>If you run into any issues or would like to provide feedback, feel free to contact me on Discord (<strong>skaht#6034</strong>).</p>
             <p>Alternatively, you can email me at <a href = "mailto: scott.norton12@gmail.com">scott.norton12@gmail.com</a>.</p>
           </v-card-text>
         </v-card>
@@ -246,6 +257,7 @@
         </v-hover>
         <v-card v-if="results" class="mx-auto justify-center" style="margin-top: 25px;">
           <v-card-title class="justify-center">Upload Results</v-card-title>
+
           <div v-if="results == 'tooLarge'" style="margin-left: 15%; margin-right: 15%; padding-bottom: 10px;">
             <v-alert  type="error" class="text-center" color="#e33a0b">
               Upload limit reached (10GB). Try "zipping" your files to reduce the size, or uploading in smaller batches.
@@ -253,7 +265,7 @@
           </div>
           <div v-if="results == 'error'" style="margin-left: 15%; margin-right: 15%; padding-bottom: 10px;">
             <v-alert  type="error" class="text-center" color="#e33a0b">
-              Unknown error occurred. Please try again later.
+              {{ errorMessage ? errorMessage : 'Unknown error occurred. Please try again later.'}}
             </v-alert>
           </div>
           <div v-if="results != 'error' && results != 'tooLarge'" style="margin-left: 5%; margin-right: 5%; padding-bottom: 15px;">
@@ -310,7 +322,8 @@ export default {
     viewDetails: false,
     tooLarge: false,
     badFiles: {},
-    openReasons: []
+    openReasons: [],
+    errorMessage: undefined
   }),
   methods: {
     checkFileType() {
@@ -325,6 +338,7 @@ export default {
       });
     },
     send() { 
+      this.errorMessage = undefined;
       this.tooLarge = false;
       this.progress = 0;
       this.results = undefined;
@@ -365,7 +379,10 @@ export default {
           });
         })
         .catch((err) => {
-          console.log(err);
+          console.log(err.response);
+          if (err.response.data.message) {
+            this.errorMessage = err.response.data.message;
+          }
           this.results = 'error';
           this.progress = undefined;
           this.waiting = false;
