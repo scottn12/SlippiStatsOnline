@@ -1,5 +1,7 @@
 # Slippi Stats Online
 
+https://slippistats.online/
+
 This website is designed to provide a way to analyze a large number of [Slippi Online](https://slippi.gg/) games at once.
 
 In addition to providing a clean interface to view and compare stats, this application can also filter the dataset using parameters such as opponent, characters played, stages played on, and more.
