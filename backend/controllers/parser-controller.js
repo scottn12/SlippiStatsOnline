@@ -64,7 +64,13 @@ const parserController = (db) => {
         setTimeout(() => {
             console.log('success:', success);
             console.log('badFiles:', badFiles.length);
-            res.send({ success, badFiles });
+            if (result.parseError) {
+                console.log('Parse error');
+                res.status(500).send({ message: 'Error when unzipping your .zip file. Make sure you use the format shown in the "How To Use" section. If this problem persists, try uploading the .slp files without zipping.' })
+            }
+            else {
+                res.send({ success, badFiles });
+            }
         }, 2000);
 
     };
@@ -74,15 +80,14 @@ const parserController = (db) => {
         var totalGames = 0;
         var success = 0;
         var badFiles = [];
-
+        var parseError = false;
         await new Promise(async (resolve) => {
             fs.createReadStream(path)
                 .pipe(unzipper.Parse())
                 .on('entry', async entry => {
-                    
+
                     try {
                         totalGames++;
-
                         // Get Game Data
                         const content = await entry.buffer();
                         var game = new SlippiGame(content);
@@ -108,10 +113,11 @@ const parserController = (db) => {
                 })
                 .on('error', function (error) {
                     console.log(`Error parsing:\n${error}`);
+                    parseError = true;
                     resolve();
                 });
         });
-        return { success, badFiles };
+        return { success, badFiles, parseError };
     }
 
     const parseSlp = async (path) => {
