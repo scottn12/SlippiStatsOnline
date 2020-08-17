@@ -2,6 +2,8 @@ import axios from 'axios';
 
 const baseURL = 'https://slippistats.online/slippi/'
 
+// Uncomment this URL in development to communicate with the local API.
+//const baseURL = 'http://localhost:3000/slippi/'
 export default {
   save: (data, onUploadProgress) => {
     return axios({
