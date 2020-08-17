@@ -23,6 +23,7 @@ const parserController = (db) => {
 
                 if (ext == 'zip') {
                     var result = await parseZip(path);
+                    console.log(path);
                     success += result.success;
                     badFiles = badFiles.concat(result.badFiles);
                 }
