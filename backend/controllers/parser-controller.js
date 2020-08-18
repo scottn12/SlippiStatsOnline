@@ -39,29 +39,14 @@ const parserController = (db) => {
                 else {
                     badFiles.push({ file: file.originalname, reason: 'Invalid file format.' });
                 }
-
-
-                // Delete file
-                fs.unlink(path, (result, err) => {
-                    if (err) {
-                        console.log(`Error deleting ${file.filename}:\n${err}`);
-                    }
-                });
-
             }
             catch (e) {
                 console.log('ERROR ON PARSE:', e);
-
-                // Delete file
-                fs.unlink(path, (result, err) => {
-                    if (err) {
-                        console.log(`Error deleting ${file.filename}:\n${err}`);
-                    }
-                });
             }
+
         };
 
-        // Allow last file to register (meh)
+        // Allow last file to register (meh), and allow files to be freed from process before deleting (hopefully)
         setTimeout(() => {
             console.log('success:', success);
             console.log('badFiles:', badFiles.length);
@@ -72,6 +57,15 @@ const parserController = (db) => {
             else {
                 res.send({ success, badFiles });
             }
+            
+            for (const file of req.files) {
+                fs.unlink(file.path, (result, err) => {
+                    if (err) {
+                        console.log(`Error deleting ${file.filename}:\n${err}`);
+                    }
+                });
+            }
+            
         }, 2000);
 
     };
@@ -86,7 +80,6 @@ const parserController = (db) => {
             fs.createReadStream(path)
                 .pipe(unzipper.Parse())
                 .on('entry', async entry => {
-
                     try {
                         totalGames++;
                         // Get Game Data
