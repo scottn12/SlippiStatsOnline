@@ -1,4 +1,4 @@
-const logger = require('../config/logger');
+const logger = require('../config/logger-config').logger;
 const { default: SlippiGame } = require('@slippi/slippi-js');
 const fs = require('fs');
 const unzipper = require('unzipper');
@@ -16,6 +16,8 @@ const parserController = (db) => {
             return res.status(400).send({ message: 'No files provided' });
         }
 
+        logger.info('New Upload Request:', req.files);
+
         for (const file of req.files) {
             try {
                 var path = file.path;
@@ -23,7 +25,6 @@ const parserController = (db) => {
 
                 if (ext == 'zip') {
                     var result = await parseZip(path);
-                    console.log(path);
                     success += result.success;
                     badFiles = badFiles.concat(result.badFiles);
                 }
@@ -41,17 +42,16 @@ const parserController = (db) => {
                 }
             }
             catch (e) {
-                console.log('ERROR ON PARSE:', e);
+                logger.error('ERROR ON PARSE:', e);
             }
 
         };
 
         // Allow last file to register (meh), and allow files to be freed from process before deleting (hopefully)
         setTimeout(() => {
-            console.log('success:', success);
-            console.log('badFiles:', badFiles.length);
+            logger.info(`Upload Complete. Success: ${success}, Fail: ${badFiles.length}`)
             if (result.parseError) {
-                console.log('Parse error');
+                logger.error('Upload Complete. Parse error.');
                 res.status(500).send({ message: 'Error when unzipping your .zip file. Make sure you use the format shown in the "How To Use" section. If this problem persists, try uploading the .slp files without zipping.' })
             }
             else {
@@ -61,7 +61,7 @@ const parserController = (db) => {
             for (const file of req.files) {
                 fs.unlink(file.path, (result, err) => {
                     if (err) {
-                        console.log(`Error deleting ${file.filename}:\n${err}`);
+                        logger.error(`Error deleting ${file.filename}:\n${err}`);
                     }
                 });
             }
@@ -95,7 +95,7 @@ const parserController = (db) => {
                         }
                     }
                     catch (e) {
-                        console.log(`Error parsing:\n${e}`);
+                        logger.error(`Error parsing:\n${e}`);
                         badFiles.push({ file: entry.path.replace(/^.*[\\\/]/, ''), reason: `Error parsing game data.` });
                     }
 
@@ -106,7 +106,7 @@ const parserController = (db) => {
                     }
                 })
                 .on('error', function (error) {
-                    console.log(`Error parsing:\n${error}`);
+                    logger.error(`Error parsing:\n${error}`);
                     parseError = true;
                     resolve();
                 });

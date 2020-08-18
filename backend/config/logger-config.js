@@ -1,7 +1,24 @@
 const winston = require('winston');
 const expressWinston = require('express-winston');
 
-const logger = expressWinston.logger({
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.combine(
+        winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        winston.format.colorize(),
+        winston.format.json(),
+    ),
+
+    transports: [
+        new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'logs/combined.log' }),
+        new winston.transports.Console()
+    ],
+});
+
+logger.info('hi')
+
+const requestLogger = expressWinston.logger({
     format: winston.format.combine(
         winston.format.colorize(),
         winston.format.json(),
@@ -35,7 +52,10 @@ const errorLogger = expressWinston.errorLogger({
     colorize: false, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
 });
 
+logger.info('hi')
+
 module.exports = {
     logger,
+    requestLogger,
     errorLogger
 };

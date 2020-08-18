@@ -1,4 +1,4 @@
-const logger = require('winston');
+const logger = require('../config/logger-config').logger;
 const mongoose = require('mongoose');
 const mongoConfig = require('../config/mongo-config');
 const config = mongoConfig.config;
@@ -8,21 +8,21 @@ const mongo = () => {
 
     mongoose.connect(config.url, { useNewUrlParser: true });
     const db = mongoose.connection;
-    db.on('error', console.log.bind(logger, 'connection error:'));
+    db.on('error', logger.error.bind(logger, 'connection error:'));
     db.once('open', () => {
-        console.log('Connected to DB');
+        logger.info('Connected to DB');
     });
 
     const getGame = async (data) => {
         return await models.GameModel.find(data, (err, result) => {
-            if (err) console.log('Error in getGame:', err);
+            if (err) logger.error('Error in getGame:', err);
         }).exec();
     }
 
     const addGame = (data) => {
         var gameInstance = new models.GameModel(data);
         gameInstance.save(function (err) {
-            if (err) return console.log('Error in addGame:', err);
+            if (err) return logger.error('Error in addGame:', err);
         });
     }
 

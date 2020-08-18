@@ -51,8 +51,5 @@ module.exports.models = {
 }
 
 module.exports.config = {
-    url: 'mongodb://localhost:27017/slippi',
-    queries: {
-
-    }
+    url: 'mongodb://localhost:27017/slippi'
 }
