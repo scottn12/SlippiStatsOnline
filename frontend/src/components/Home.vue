@@ -2,11 +2,6 @@
   <v-container>
     <!-- Desktop -->
     <v-flex v-if="!$vuetify.breakpoint.xsOnly" row wrap class="justify-space-around" style="margin-top: 15px;">
-    <!-- <v-row no-gutters justify="center">
-      <v-alert type="warning" class="text-center" style="width: 40%;">
-        Due to high traffic, some uploads may fail. If this is the case, try breaking your uploads into smaller batches, or try again at a later time. Sorry for the inconvience.
-      </v-alert>
-    </v-row> -->
       <div style="width: 50%;">
         <v-card class="mx-auto justify-center">
           <v-card-title class="header">About</v-card-title>
@@ -154,11 +149,6 @@
     <!-- Mobile -->
 
     <div v-if="$vuetify.breakpoint.xsOnly" style="margin-top: 15px;">
-      <!-- <v-row no-gutters justify="center">
-        <v-alert type="warning" class="text-center" style="width: 90%;">
-          Due to high traffic, some uploads may fail. If this is the case, try breaking your uploads into smaller batches, or try again at a later time. Sorry for the inconvience.
-        </v-alert>
-      </v-row> -->
       <v-row no-gutters>
         <v-card class="mx-auto justify-center">
           <v-card-title class="header">About</v-card-title>

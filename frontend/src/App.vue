@@ -44,6 +44,11 @@
     </v-app-bar>
 
     <v-main>
+      <v-row v-if="displayMaintenance" no-gutters justify="center" style="margin-top: 25px;">
+        <v-alert type="warning" class="text-center" :style="($vuetify.breakpoint.xsOnly ? 'width: 90%;' : 'width: 50%;') + 'margin-bottom: 0;'">
+          {{ maintenanceMessage }}
+        </v-alert>
+      </v-row>
       <router-view></router-view>
     </v-main>
 
@@ -53,7 +58,27 @@
 
 <script>
 
+import API from './api';
+
 export default {
   name: "App",
+  data: () => ({
+    displayMaintenance: false,
+    maintenanceMessage: undefined
+  }),
+  mounted() {
+    API.checkMaintenance()
+    .then((response) => {
+      this.displayMaintenance = response.data.display;
+      this.maintenanceMessage = response.data.message;
+    })
+    .catch((err) => {
+      console.log(err);
+      this.displayMaintenance = true;
+      this.maintenanceMessage = 'We are currently experiencing unexpected service outages. Some features may be unavailable currently. Sorry for the inconvenience.';
+    });
+
+  }
 };
+
 </script>
