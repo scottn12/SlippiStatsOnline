@@ -17,18 +17,25 @@ const mongo = () => {
         return await models.GameModel.find(data, (err, result) => {
             if (err) logger.error('Error in getGame:', err);
         }).exec();
-    }
+    };
 
     const addGame = (data) => {
         var gameInstance = new models.GameModel(data);
         gameInstance.save(function (err) {
             if (err) return logger.error('Error in addGame:', err);
         });
-    }
+    };
+
+    const getTotalGameCount = async () => {
+        return await models.GameModel.count({}, (err, count) => {
+            if (err) logger.error('Error in getGame:', err);
+        }).exec();
+    };
 
     return {
         getGame,
-        addGame
+        addGame,
+        getTotalGameCount
     }
 
 };

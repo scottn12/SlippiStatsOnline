@@ -400,8 +400,20 @@ const statsController = (db) => {
         res.send(stats);
     };
 
+    const getTotalGameCount = async (req, res) => {
+        try {
+            const count = await db.getTotalGameCount();
+            res.send({ count });
+        }
+        catch (e) {
+            logger.error('Error getting total game count:', e);
+            res.status(500).send({ message: 'Error getting total game count.' });
+        }
+    };
+
     return {
-        getStats
+        getStats,
+        getTotalGameCount
     }
 
 };

@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const logs = require('./config/logger-config');
 const logger = logs.logger;
-var https = require('https');
+const https = require('https');
 
 const app = express();
 const port = 3000;
@@ -14,7 +14,7 @@ const port = 3000;
 app.use(cors());
 app.use(logs.requestLogger);
 app.use(logs.errorLogger);
-app.use('/slippi', routes);
+app.use('/api', routes);
 
 // Cleanup tmp directory
 fs.readdir('tmp', (err, files) => {

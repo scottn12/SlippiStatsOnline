@@ -17,6 +17,7 @@ const routes = (db) => {
 
     const statsController = require('./controllers/stats-controller')(db);
     router.get('/stats/:code', statsController.getStats);
+    router.get('/totalGameCount', statsController.getTotalGameCount);
 
     return {
         router
