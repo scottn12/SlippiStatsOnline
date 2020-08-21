@@ -27,7 +27,7 @@ export default {
   checkMaintenance: () => {
     return axios({
       method: 'GET',
-      url: baseURL + '/maintenance',
+      url: baseURL + 'maintenance',
       headers: {
         'Access-Control-Allow-Origin': '*'
       },
