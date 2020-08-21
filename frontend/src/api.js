@@ -1,8 +1,6 @@
 import axios from 'axios';
 
-var baseURL = 'https://slippistats.online/api/'
-// Uncomment this URL in development to communicate with the local API.
-// baseURL = 'http://localhost:3000/api/'
+var baseURL = process.env.VUE_APP_BASE_URL;
 
 export default {
   save: (data, onUploadProgress) => {
