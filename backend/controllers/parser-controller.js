@@ -304,7 +304,7 @@ const parserController = (db) => {
             /**
              * Register game in DB if not already there
              */
-            let dbGame = await db.getGame(gameData);
+            let dbGame = await db.getGames(gameData);
             if (dbGame && dbGame.length > 0) {
                 badFile = { file: path.replace(/^.*[\\\/]/, ''), reason: 'Game with identical data already registered.' };
             }
