@@ -114,7 +114,7 @@ const statsController = (db) => {
             data.$and.push({ 'date': { '$gte': dates[0], '$lt': dates[1] } });
         }
 
-        let games = await db.getGame(data);
+        let games = await db.getGames(data);
 
         /**
          * Collect overall stats
