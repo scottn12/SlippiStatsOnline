@@ -29,7 +29,7 @@ const mongo = () => {
     const getTotalGameCount = async () => {
         return await models.GameModel.count({}, (err, count) => {
             if (err) logger.error('Error in getGame:', err);
-        }).exec();
+        }).lean().exec();
     };
 
     return {
