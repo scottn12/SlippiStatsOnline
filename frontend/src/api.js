@@ -17,7 +17,7 @@ export default {
   getStats: (code, params) => {
     return axios({
       method: 'GET',
-      url: baseURL + 'stats/' + code,
+      url: baseURL + 'stats' + (code ? `/${code}` : ''),
       headers: {
         'Access-Control-Allow-Origin': '*'
       },
@@ -28,6 +28,15 @@ export default {
     return axios({
       method: 'GET',
       url: baseURL + 'maintenance',
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
+    });
+  },
+  getTotalGameCount: () => {
+    return axios({
+      method: 'GET',
+      url: baseURL + 'totalGameCount',
       headers: {
         'Access-Control-Allow-Origin': '*'
       },

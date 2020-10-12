@@ -1,4 +1,5 @@
 import { Doughnut } from 'vue-chartjs'
+import theme from '../plugins/theme';
 
 export default {
   extends: Doughnut,
@@ -11,6 +12,13 @@ export default {
   data: () => ({
     oldChartData: undefined
   }),
+  computed: {
+    colorsUsingTheme: function () {
+      return this.colors.map(v => {
+        return theme.themes.light[v]
+      });
+    }
+  },
   mounted() {
     this.addPlugin({
       id: 'my-plugin',
@@ -26,8 +34,9 @@ export default {
           labels: this.labels,
           datasets: [
             {
-              backgroundColor: this.colors,
-              data: this.chartData
+              backgroundColor: this.colorsUsingTheme,
+              data: this.chartData,
+              borderColor: 'transparent',
             }
           ]
         },
@@ -57,7 +66,7 @@ export default {
       ctx.restore();
       var fontSize = (height / 114).toFixed(2);
       ctx.font = fontSize + "em sans-serif";
-      ctx.fillStyle = this.percentage < 50 ? 'red' : '#44A963';
+      ctx.fillStyle = this.percentage < 50 ? '#e33a0b' : '#44A963';
       ctx.textBaseline = "middle";
 
       var text = Math.round(this.percentage) + '%';

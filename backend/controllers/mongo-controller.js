@@ -13,10 +13,10 @@ const mongo = () => {
         logger.info('Connected to DB');
     });
 
-    const getGame = async (data) => {
+    const getGames = async (data) => {
         return await models.GameModel.find(data, (err, result) => {
             if (err) logger.error('Error in getGame:', err);
-        }).exec();
+        }).lean().exec();
     };
 
     const addGame = (data) => {
@@ -33,7 +33,7 @@ const mongo = () => {
     };
 
     return {
-        getGame,
+        getGames,
         addGame,
         getTotalGameCount
     }

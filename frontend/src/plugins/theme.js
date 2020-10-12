@@ -1,12 +1,25 @@
-import colors from 'vuetify/lib/util/colors'
+import colors from 'vuetify/lib/util/colors';
 
 export default {
-  primary: {
-    base: '#44A963',
-    darken1: colors.purple.darken2,
+  options: {
+    customProperties: true
   },
-  secondary: colors.indigo,
-  // All keys will generate theme styles,
-  // Here we add a custom `tertiary` color
-  tertiary: colors.pink.base,
+  themes: {
+    light: {
+      primary: '#44A963',
+      secondary: '#e33a0b',
+      error: '#e33a0b',
+      loadingOverlay: colors.grey.lighten1,
+      background: colors.shades.white,
+      menuBackground: '#44A963'
+    },
+    dark: {
+      primary: '#44A963',
+      secondary: '#e33a0b',
+      error: '#e33a0b',
+      loadingOverlay: colors.grey.darken1,
+      background: colors.grey.darken3,
+      menuBackground: colors.grey.darken4
+    },
+  },
 }

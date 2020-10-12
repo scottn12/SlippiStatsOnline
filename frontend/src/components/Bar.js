@@ -1,5 +1,6 @@
 import { HorizontalBar } from 'vue-chartjs'
 import Chart from 'chart.js';
+import theme from '../plugins/theme';
 
 export default {
   extends: HorizontalBar,
@@ -27,7 +28,7 @@ export default {
           datasets: [
             {
               percentage: this.percentage,
-              backgroundColor: ['#44A963', '#e33a0b'],
+              backgroundColor: [theme.themes.light.primary, theme.themes.light.secondary],
               data: this.chartData
             }
           ]
@@ -57,25 +58,22 @@ export default {
     },
     plugin(chartInstance) {
       var ctx = chartInstance.chart.ctx;
-
       // render the value of the chart above the bar
       ctx.font = Chart.helpers.fontString(18, 'normal', Chart.defaults.global.defaultFontFamily);
       ctx.textAlign = 'center';
       ctx.textBaseline = 'bottom';
       ctx.fillStyle = 'white';
-
       chartInstance.data.datasets.forEach(function (dataset) {
         for (var i = 0; i < dataset.data.length; i++) {
           var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
           var scaleMax = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._yScale.maxHeight;
           var yPos = (scaleMax - model.y) / scaleMax >= 0.93 ? model.y + 20 : model.y + 10;
-          let text = dataset.data[i];
+          let text = (dataset.data[i]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
           if (dataset.percentage) text += '%';
           ctx.fillText(text, model.x/2, yPos);
         }
       });
-
-    }
+    },
   },
   watch: {
     chartData() {

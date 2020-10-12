@@ -9,6 +9,20 @@ const parserController = (db) => {
 
     const parse = async (req, res) => {
 
+        // Check if upload is disabled
+        try {
+            // Reload config on each request in case it has changed
+            delete require.cache[require.resolve('../config/maintenance-config.js')];
+            const config = require('../config/maintenance-config');  
+            if (config.disableUpload) {
+                return res.status(500).send({ message: 'Upload currently disabled.' });
+    }
+        }
+        catch (e) {
+            logger.error('Error getting maintenance config', e);
+            res.status(500).send({ message: 'An unknown error has ocurred. Please try again later.' });
+        }
+        
         var success = 0;
         var badFiles = [];
 
@@ -57,7 +71,7 @@ const parserController = (db) => {
             else {
                 res.send({ success, badFiles });
             }
-            
+
             for (const file of req.files) {
                 fs.unlink(file.path, (result, err) => {
                     if (err) {
@@ -65,7 +79,7 @@ const parserController = (db) => {
                     }
                 });
             }
-            
+
         }, 2000);
 
     };

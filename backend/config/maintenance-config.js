@@ -1,6 +1,7 @@
 const config = {
     display: false,
-    message: ''
+    message: '',
+    disableUpload: false
 };
 
 module.exports = config;
