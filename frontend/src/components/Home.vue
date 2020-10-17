@@ -331,6 +331,7 @@ export default {
     openReasons: [],
     errorMessage: undefined,
     totalGames: undefined,
+    slpUpload: undefined,
   }),
   mounted() {
     API.getTotalGameCount()
@@ -345,11 +346,15 @@ export default {
     checkFileType() {
       this.invalidFile = false;
       this.fileError = undefined;
+      this.slpUpload = true;
       this.files.forEach((file) => {
         let ext = file.name.split(".").pop();
         if (ext != "zip" && ext != "slp") {
           this.invalidFile = true;
           this.fileError = "File type must be .zip or .slp";
+        }
+        else if (ext === 'zip') {
+          this.slpUpload = false;  // Not exclusively a .slp upload
         }
       });
     },
@@ -386,6 +391,9 @@ export default {
             if (!file) {
               file.reason = "Unknown";
               file.file = "Unknown";
+            }
+            else if (this.slpUpload) {  
+              file.file = file.file.substring(file.file.indexOf('_') + 1);  // Remove timestamp from start of file name if not exclusively a .slp uplaod
             }
             if (file.reason in this.badFiles) {
               this.badFiles[file.reason].push(file.file);
