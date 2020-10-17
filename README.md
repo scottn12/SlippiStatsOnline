@@ -25,7 +25,7 @@ To run locally:
 
 1. [Install & Run MongoDB](https://docs.mongodb.com/manual/installation/) locally.
 1. `npm install`
-1. `npm start`
+1. `npm start` or `npm run-script dev`
 
 ## Deployment
 
