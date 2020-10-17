@@ -168,7 +168,7 @@
                     rounded
                     height="20"
                     style="width: 70%; margin-right: 5px"
-                    v-model="progress"
+                    :value="progress"
                   ></v-progress-linear>
                   <span style="color: var(--v-primary-base)"
                     >{{ progress }}%</span
