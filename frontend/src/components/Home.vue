@@ -200,7 +200,7 @@
                   </v-row>
                   <div class="waitingText">
                     Your files are currently being processed. This may take a
-                    few minutes.
+                    while.
                     <br />Keep this page open to see the results of your upload.
                   </div>
                 </v-overlay>
