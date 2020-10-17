@@ -52,7 +52,7 @@
               <li>
                 Locate your Slippi Online replay files. By default these are
                 stored in the
-                <code style="background-color: lightgray; color: black"
+                <code style="background-color: var(--v-pathBackground-base); color: black"
                   >C:\Users\[username]\Documents\Slippi</code
                 >
                 directory.
