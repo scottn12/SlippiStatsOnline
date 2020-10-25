@@ -11,9 +11,15 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 const routes = (db) => {
+    
+    // /api responds for health checks
+    router.get('/', function (req, res) {
+        res.send('App is running');
+    });
 
     const parser = require('../controllers/parser-controller')(db);
     router.post('/save', upload.array('files'), parser.parse);
+
 
     const statsController = require('../controllers/stats-controller')(db);
     router.get('/stats', statsController.getStatsGlobal);
