@@ -19,6 +19,12 @@ const mongo = () => {
         }).lean().exec();
     };
 
+    const checkGame = async (data) => {
+        return await models.GameModel.find(data, (err, result) => {
+            if (err) logger.error('Error in checkGame:', err);
+        }).limit(1).count();
+    };
+
     const addGame = (data) => {
         var gameInstance = new models.GameModel(data);
         gameInstance.save(function (err) {
@@ -34,6 +40,7 @@ const mongo = () => {
 
     return {
         getGames,
+        checkGame,
         addGame,
         getTotalGameCount
     }
