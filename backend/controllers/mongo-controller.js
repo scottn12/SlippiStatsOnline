@@ -27,7 +27,7 @@ const mongo = () => {
     };
 
     const getTotalGameCount = async () => {
-        return await models.GameModel.count({}, (err, count) => {
+        return await models.GameModel.estimatedDocumentCount({}, (err, count) => {
             if (err) logger.error('Error in getGame:', err);
         }).lean().exec();
     };
