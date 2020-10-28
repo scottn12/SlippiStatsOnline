@@ -349,6 +349,14 @@ export default {
       this.slpUpload = true;
       this.files.forEach((file) => {
         let ext = file.name.split(".").pop();
+
+        // Temp disable .zip files
+        if (ext == 'zip') {
+          this.invalidFile = true;
+          this.fileError = "Files ending with .zip are temporarily disabled";
+          return;
+        }
+
         if (ext != "zip" && ext != "slp") {
           this.invalidFile = true;
           this.fileError = "File type must be .zip or .slp";
