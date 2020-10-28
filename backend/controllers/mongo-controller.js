@@ -22,7 +22,7 @@ const mongo = () => {
     const checkGame = async (data) => {
         return await models.GameModel.find(data, (err, result) => {
             if (err) logger.error('Error in checkGame:', err);
-        }).limit(1).count();
+        }).limit(1).countDocuments();
     };
 
     const addGame = (data) => {
