@@ -15,6 +15,7 @@ To run either the frontend or the backend the LTS version of [Node JS](https://n
 The front end was developed in Javascript, HTML, and CSS using the Vue.js framework along side the Vuetify component library.
 To run locally:
 
+1. `cd frontend`
 1. `npm install`
 1. `npm run serve`
 
@@ -24,6 +25,7 @@ The back end was developed in node.js using the Express framework and a MongoDB 
 To run locally:
 
 1. [Install & Run MongoDB](https://docs.mongodb.com/manual/installation/) locally.
+1. `cd backend`
 1. `npm install`
 1. `npm start` or `npm run-script dev`
 
