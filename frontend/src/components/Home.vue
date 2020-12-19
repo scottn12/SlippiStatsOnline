@@ -27,7 +27,7 @@
               parameters such as opponent, characters played, stages played on,
               and more.
             </p>
-            <p>
+            <!-- <p>
               If you would like to support this website, please consider
               <a
                 href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NJY276YL5Y4J8&currency_code=USD"
@@ -35,7 +35,7 @@
                 >donating</a
               >
               to help cover the cost of operation.
-            </p>
+            </p> -->
             <p style="margin: 0">
               <a
                 href="https://github.com/scottn12/SlippiStatsOnline"
