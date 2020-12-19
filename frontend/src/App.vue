@@ -26,9 +26,9 @@
         <v-icon left :light="!$vuetify.theme.dark">mdi-magnify</v-icon>View Stats
       </v-btn>
 
-      <v-btn :light="!$vuetify.theme.dark" class="ma-2" target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NJY276YL5Y4J8&currency_code=USD">
+      <!-- <v-btn :light="!$vuetify.theme.dark" class="ma-2" target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NJY276YL5Y4J8&currency_code=USD">
         <v-icon left :light="!$vuetify.theme.dark">mdi-gift-outline</v-icon>Donate
-      </v-btn>
+      </v-btn> -->
 
     </v-app-bar>
 
