@@ -351,11 +351,11 @@ export default {
         let ext = file.name.split(".").pop();
 
         // Temp disable .zip files
-        if (ext == 'zip') {
-          this.invalidFile = true;
-          this.fileError = "Files ending with .zip are temporarily disabled";
-          return;
-        }
+        // if (ext == 'zip') {
+        //   this.invalidFile = true;
+        //   this.fileError = "Files ending with .zip are temporarily disabled";
+        //   return;
+        // }
 
         if (ext != "zip" && ext != "slp") {
           this.invalidFile = true;
