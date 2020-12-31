@@ -1,7 +1,8 @@
 const logger = require('../config/logger-config').logger;
 const { default: SlippiGame } = require('@slippi/slippi-js');
 const fs = require('fs');
-const unzipper = require('unzipper');
+const rimraf = require("rimraf");
+var admZip = require('adm-zip');
 
 const stages = { 2: 'Fountain of Dreams', 3: 'Pokemon Stadium', 8: "Yoshi's Story", 28: 'Dreamland', 31: 'Battlefield', 32: 'Final Destination' };
 
@@ -79,9 +80,7 @@ const parserController = (db) => {
                     }
                 });
             }
-
         }, 2000);
-
     };
 
     const parseZip = async (path) => {
@@ -90,42 +89,78 @@ const parserController = (db) => {
         var success = 0;
         var badFiles = [];
         var parseError = false;
+
+        // Extract zip into tmp dir
+        var zip = new admZip(path);
+        let dirPath = `./tmp/${Date.now()}`;
+        zip.extractAllTo(dirPath, true);
+
+        // Go through extracted dir and find files
         await new Promise(async (resolve) => {
-            fs.createReadStream(path)
-                .pipe(unzipper.Parse())
-                .on('entry', async entry => {
-                    try {
-                        totalGames++;
-                        // Get Game Data
-                        const content = await entry.buffer();
-                        var game = new SlippiGame(content);
-
-                        var result = await parseGame(game, entry.path);
-                        if (result.success) {
-                            success++;
-                        }
-                        else {
-                            badFiles.push(result.badFile);
-                        }
-                    }
-                    catch (e) {
-                        logger.error(`Error parsing:\n${e}`);
-                        badFiles.push({ file: entry.path.replace(/^.*[\\\/]/, ''), reason: `Error parsing game data.` });
-                    }
-
-                    await entry.autodrain();
-
-                    if (totalGames == success + badFiles.length) {  // Check if all games are done
-                        resolve();
-                    }
-                })
-                .on('error', function (error) {
-                    logger.error(`Error parsing:\n${error}`);
+            fs.readdir((dirPath), (error, subDir) => {
+                if (error || subDir.length !== 1) {
+                    logger.error('Error reading extracted zip:', e);
                     parseError = true;
                     resolve();
+                }
+                let subDirPath = `${dirPath}/${subDir[0]}`;
+                fs.stat(subDirPath, (error, stats) => {
+                    if (error || !stats.isDirectory()) {
+                        logger.error('Error checking for subdir in extracted', e);
+                        parseError = true;
+                        resolve();
+                    }
+                    fs.readdir(subDirPath, (error, files) => {
+                        if (error) {
+                            logger.error('Error reading subdir in extracted:', e);
+                            parseError = true;
+                            resolve();
+                        }
+
+                        // Try parsing each file found
+                        var processed = 0;
+                        (async () => {
+                            for (const file of files) {
+                                let filePath = `${subDirPath}/${file}`;
+                                try {
+                                    totalGames++;
+                                    // Get Game Data
+                                    var game = new SlippiGame(filePath);
+                                    var result = await parseGame(game, file);
+                                    if (result.success) {
+                                        success++;
+                                    }
+                                    else {
+                                        badFiles.push(result.badFile);
+                                    }
+                                }
+                                catch (e) {
+                                    logger.error(`Error parsing:\n${e}`);
+                                    badFiles.push({ file: file.replace(/^.*[\\\/]/, ''), reason: `Error parsing game data.` });
+                                }
+                                finally {
+                                    processed++;
+                                }
+
+                                if (processed === files.length) {  // Check if all games are done
+                                    console.log('resolved!')
+                                    resolve();
+                                }
+                            }
+                        })();
+                    });
                 });
+            })
         });
+
+
+        // Delete extracted directory
+        rimraf(dirPath, (error) => {
+            logger.error('Unable to delete extracted directory:', error);
+        });
+
         return { success, badFiles, parseError };
+
     }
 
     const parseSlp = async (path) => {

@@ -4,10 +4,12 @@ const db = require('./controllers/mongo-controller')();
 const routes = require('./config/routes')(db).router;
 const fs = require('fs');
 const path = require('path');
+const rimraf = require("rimraf");
 const logs = require('./config/logger-config');
 const logger = logs.logger;
 const https = require('https');
 const env = process.env.NODE_ENV || 'develop';
+
 
 const app = express();
 const port = 3000;
@@ -18,16 +20,13 @@ app.use(logs.errorLogger);
 app.use('/api', routes);
 
 // Cleanup tmp directory
-fs.readdir('tmp', (err, files) => {
-    if (err) logger.error('Unable to read directory:', err);
-
-    for (const file of files) {
-        if (file != '.gitkeep') {
-            fs.unlink(path.join('tmp', file), err => {
-                if (err) logger.error('Unable to delete file:', err);
-            });
-        }
-    }
+rimraf('./tmp', () => {
+    // Timeout to allow directory to be fully deleted first
+    setTimeout(() => {
+        fs.mkdir('./tmp', () => {
+            fs.writeFile('./tmp/.gitkeep', '', () => { });
+        });
+    }, 1000);
 });
 
 if (env == 'prod') {
