@@ -2,7 +2,7 @@ const logger = require('../config/logger-config').logger;
 const { default: SlippiGame } = require('@slippi/slippi-js');
 const fs = require('fs');
 const rimraf = require("rimraf");
-var AdmZip = require('adm-zip');
+var admZip = require('adm-zip');
 
 const stages = { 2: 'Fountain of Dreams', 3: 'Pokemon Stadium', 8: "Yoshi's Story", 28: 'Dreamland', 31: 'Battlefield', 32: 'Final Destination' };
 
@@ -80,9 +80,7 @@ const parserController = (db) => {
                     }
                 });
             }
-
         }, 2000);
-
     };
 
     const parseZip = async (path) => {
@@ -93,10 +91,11 @@ const parserController = (db) => {
         var parseError = false;
 
         // Extract zip into tmp dir
-        var zip = new AdmZip(path);
+        var zip = new admZip(path);
         let dirPath = `./tmp/${Date.now()}`;
         zip.extractAllTo(dirPath, true);
 
+        // Go through extracted dir and find files
         await new Promise(async (resolve) => {
             fs.readdir((dirPath), (error, subDir) => {
                 if (error || subDir.length !== 1) {
@@ -117,6 +116,8 @@ const parserController = (db) => {
                             parseError = true;
                             resolve();
                         }
+
+                        // Try parsing each file found
                         var processed = 0;
                         (async () => {
                             for (const file of files) {
