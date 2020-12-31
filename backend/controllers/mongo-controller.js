@@ -6,9 +6,13 @@ const models = mongoConfig.models;
 
 const mongo = () => {
 
-    mongoose.connect(config.url, { useNewUrlParser: true });
+    mongoose.connect(config.url, { useNewUrlParser: true, useUnifiedTopology: true });
     const db = mongoose.connection;
-    db.on('error', logger.error.bind(logger, 'connection error:'));
+    db.on('error', (err) => {
+        logger.error('Error connecting to DB:',  err);
+        process.exit(1);  // Close backend server
+    });
+    
     db.once('open', () => {
         logger.info('Connected to DB');
     });
