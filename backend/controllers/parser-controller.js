@@ -223,9 +223,15 @@ const parserController = (db) => {
              * Check for players, determine player index, code, tag, date
              */
             let metadata = game.getMetadata();
+
+            if (metadata.players['2'] || metadata.players['3']) {
+                badFile = { file: path.replace(/^.*[\\\/]/, ''), reason: `More than 2 players detected.` };
+                return { success, badFile };  // Skip game if there is data for ports 3 or 4 (Doubles is not yet supported)       
+            }
+
             if (!metadata.players['0'].names.code || !metadata.players['1'].names.code) {
                 badFile = { file: path.replace(/^.*[\\\/]/, ''), reason: `Player code missing for one or both players.` };
-                return { success, badFile };  // Skip game if desired player not found
+                return { success, badFile };  // Skip game if player code(s) are missing
             }
 
             gameData.p1Code = metadata.players[0].names.code;
