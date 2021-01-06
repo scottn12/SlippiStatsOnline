@@ -67,7 +67,7 @@ const parserController = (db) => {
             logger.info(`Upload Complete. Success: ${success}, Fail: ${badFiles.length}`)
             if (result.parseError) {
                 logger.error('Upload Complete. Parse error.');
-                res.status(500).send({ message: 'Error when unzipping your .zip file. Make sure you use the format shown in the "How To Use" section. If this problem persists, try uploading the .slp files without zipping.' })
+                res.status(500).send({ message: 'An error occurred while unzipping your .zip file. Make sure you use the method in the "How To Use" section (some third party zipping software causes issues). If this problem persists, try uploading the .slp files without zipping.' });
             }
             else {
                 res.send({ success, badFiles });
