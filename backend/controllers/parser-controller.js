@@ -99,20 +99,20 @@ const parserController = (db) => {
         await new Promise(async (resolve) => {
             fs.readdir((dirPath), (error, subDir) => {
                 if (error || subDir.length !== 1) {
-                    logger.error('Error reading extracted zip:', e);
+                    logger.error('Error reading extracted zip:', error);
                     parseError = true;
                     resolve();
                 }
                 let subDirPath = `${dirPath}/${subDir[0]}`;
                 fs.stat(subDirPath, (error, stats) => {
                     if (error || !stats.isDirectory()) {
-                        logger.error('Error checking for subdir in extracted', e);
+                        logger.error('Error checking for subdir in extracted', error);
                         parseError = true;
                         resolve();
                     }
                     fs.readdir(subDirPath, (error, files) => {
                         if (error) {
-                            logger.error('Error reading subdir in extracted:', e);
+                            logger.error('Error reading subdir in extracted:', error);
                             parseError = true;
                             resolve();
                         }
