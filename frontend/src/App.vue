@@ -26,10 +26,6 @@
         <v-icon left :light="!$vuetify.theme.dark">mdi-magnify</v-icon>View Stats
       </v-btn>
 
-      <v-btn :light="!$vuetify.theme.dark" class="ma-2" target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NJY276YL5Y4J8&currency_code=USD">
-        <v-icon left :light="!$vuetify.theme.dark">mdi-gift-outline</v-icon>Donate
-      </v-btn>
-
     </v-app-bar>
 
     <!-- Mobile Menu Bar-->
@@ -54,12 +50,6 @@
               <v-icon>mdi-magnify</v-icon>
             </v-list-item-avatar>
             <v-list-item-title >View Stats</v-list-item-title>
-          </v-list-item>
-          <v-list-item target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NJY276YL5Y4J8&currency_code=USD">
-            <v-list-item-avatar style="margin: 0;">
-              <v-icon>mdi-gift-outline</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-title>Donate</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
